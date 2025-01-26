@@ -1,37 +1,31 @@
-name:  Deploy site
+name: Deploy site
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "bespoke-static-site-generator" ]
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@master
     
-    #- name: Checkout cobalt
-    #  uses: actions/checkout@master
-    #  with:
-    #    repository: cobalt-org/cobalt.rs
-    #    path: _cobaltrs
-        
-    #- name: Build cobalt
-    #  working-directory: ./_cobaltrs
-    #  run: cargo build --release
-      
-    #- name: Build site
-    #  run: ./_cobaltrs/target/release/cobalt build
+    - name: Build bssg
+      working-directory: ./tools/bssg
+      run: cargo build --release
 
-    #- name: Deploy
-    #  uses: s0/git-publish-subdir-action@develop
-    #  env:
-    #    REPO: self
-    #    BRANCH: master
-    #    FOLDER: _build
-    #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build site
+      working-directory: ./tools/bssg
+      run: ./tools/bssg/target/release/bssg
+
+    - name: Deploy
+      uses: s0/git-publish-subdir-action@develop
+      env:
+        REPO: self
+        BRANCH: bespoke-static-site-generator-deployment
+        FOLDER: ./workdir/www_out
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
