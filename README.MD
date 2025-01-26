@@ -4,4 +4,4 @@ Repository layout:
   - `/tools/bssg` - bespoke static site generator for [jaday.io](https://jaday.io)
   - `/www` - web content for [jaday.io](https://jaday.io)
 
-The actual site is hosted on the [`master`](https://github.com/z2oh/z2oh.github.io/tree/master) branch. When the [`dev`](https://github.com/z2oh/z2oh.github.io/) branch gets updated, a GitHub action builds my site with cobalt and deploys it to the `master` branch.
+`.github/deploy.yml` triggers on pushes to `main` and builds and runs `/tools/bssg` to generate the site from the sources in `/www`. The built site is then pushed to the `gh-pages` branch, where it is deployed by GitHub pages and accessible at [jaday.io](https://jaday.io).
