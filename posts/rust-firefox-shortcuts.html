@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Firefox Shortcuts for Rustaceans</title>
+    <link rel="stylesheet" href="/style.css" type="text/css" media="all" />
+    <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+                extensions: ["tex2jax.js"],
+                jax: ["input/TeX", "output/HTML-CSS"],
+                tex2jax: {
+                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true
+                },
+                "HTML-CSS": { fonts: ["TeX"] }
+            });
+        </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-MML-AM_CHTML' async></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+</head>
+
+<body data-route=feed>
+    <main>
+        <article>
+            <h1>Firefox Shortcuts for Rustaceans</h1>
+            <p>I recently found out about Firefox's advanced bookmarks feature, and quickly found a way to use them to
+                speed up my workflow. I made bookmarks to search the <a href="https://doc.rust-lang.org/std/">Rust
+                    standard library</a>, the <a href="https://crates.io">crates.io</a> registry, and the crate
+                documentation aggregate <a href="https://docs.rs">docs.rs</a>.</p>
+            <p>Here is a short demo:</p>
+            <center>
+                <img src="/assets/blog/firefox-shortcuts/demo.gif" style="width: 100%; max-width: 704px;"
+                    alt="GIF demoing the bookmark shortcuts.">
+            </center>
+            <p>Here are the three bookmarks that I made in Firefox:</p>
+            <center>
+                <img src="/assets/blog/firefox-shortcuts/std.png" style="width: 100%; max-width: 440px;"
+                    alt="std lib search bookmark">
+            </center>
+            <center>
+                <img src="/assets/blog/firefox-shortcuts/crates.png" style="width: 100%; max-width: 440px;"
+                    alt="crates search bookmark">
+            </center>
+            <center>
+                <img src="/assets/blog/firefox-shortcuts/docs.png" style="width: 100%; max-width: 440px;"
+                    alt="docs search bookmark">
+            </center>
+            <p>Here is the text for each bookmark for easy copy-paste:</p>
+            <p>STD</p>
+            <pre><code class="language-">https://doc.rust-lang.org/std/?search=%s
+                </code></pre>
+            <p>crates.io</p>
+            <pre><code class="language-">https://crates.io/search?q=%s
+                </code></pre>
+            <p>docs.rs</p>
+            <pre><code class="language-">https://docs.rs/releases/search?query=%s&amp;i-am-feeling-lucky=1
+                </code></pre>
+            <p><em>N.B., remove the <code>&amp;i-am-feeling-lucky=1</code> to get normal searching.</em></p>
+            <p>I hope this was helpful!</p>
+        </article>
+    </main>
+</body>
+
+</html>

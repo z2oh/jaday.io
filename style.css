@@ -1,0 +1,110 @@
+html {
+    /* This makes all REM measurements based on 10px sizing. */
+    font-size: 62.5%
+}
+
+@font-face {
+    font-family: "Work Sans";
+    font-style: normal;
+    font-weight: 400;
+    src: url('/assets/fonts/work-sans-v8-latin-regular.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: "Fira Code";
+    font-style: normal;
+    font-weight: 400;
+    src: url('/assets/fonts/fira-code-v9-latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-regular.woff2') format('woff2');
+}
+
+html,
+body {
+    line-height: 1.6;
+    font-weight: 400;
+    font-family: "Work Sans", sans-serif;
+    margin: 0;
+}
+
+.social-link {
+    margin-right: 8px;
+}
+
+#github-social {
+    content: url('/assets/svg/github.svg');
+    width: 24px;
+}
+
+#linkedin-social {
+    content: url('/assets/svg/linkedin.svg');
+    width: 24px;
+}
+
+code {
+    padding: .2rem .5rem;
+    margin: 0 .2rem;
+    font-family: "Fira Code", monospace;
+    font-size: 1.6rem;
+    white-space: nowrap;
+    background: #f1f1f1;
+    border: 1px solid #e1e1e1;
+    border-radius: 4px;
+}
+
+pre>code {
+    display: block;
+    padding: 1rem 1.5rem;
+    white-space: pre;
+}
+
+main {
+    margin: 32px;
+}
+
+@media only screen and (min-width: 768px) {
+    main {
+        margin: 128px;
+        max-width: 1024px;
+    }
+}
+
+.main-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.main-list-link-type-pdf::before {
+    content: url('/assets/svg/bxs-file-pdf.svg');
+    position: absolute;
+    margin-left: -2.6rem;
+    margin-top: 0.4rem;
+}
+
+.post-date {
+    margin-top: -1.8rem;
+    font-size: 1.1rem;
+}
+
+.post-link {
+    font-style: bold;
+}
+
+ul {
+    font-size: 1.6rem;
+}
+
+p {
+    font-size: 1.6rem;
+}
+
+h3 {
+    font-size: 1.6rem;
+}
+
+h4 {
+    font-size: 2.0rem;
+}
+
+h5 {
+    font-size: 1.6rem;
+}
