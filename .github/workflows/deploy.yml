@@ -2,7 +2,7 @@ name: Deploy site
 
 on:
   push:
-    branches: [ "bespoke-static-site-generator" ]
+    branches: [ main ]
 
 env:
   CARGO_TERM_COLOR: always
