@@ -2,8 +2,7 @@ use std::hash::Hash;
 use std::borrow::Borrow;
 use quick_cache::Equivalent;
 use std::path::{Path, PathBuf};
-use crate::util::prelude::*;
-use anyhow::{anyhow, Result};
+use jstd::prelude::*;
 
 /// Lazy-loaded concurrent cache over a directory. The first fetch of a file will cache the file's
 /// contents into an Arc<String> that can then be shared across threads.
@@ -19,7 +18,7 @@ impl LazyCache {
         }
 
         // Attempt to presize the cache with the number of files in the directory.
-        let num_files = walkdir::WalkDir::new(&dir).min_depth(1).into_iter().filter_map(Result::ok).count();
+        let num_files = WalkDir::new(&dir).min_depth(1).into_iter().filter_map(Result::ok).count();
         trace!("Lazy cache initializing with room for {} files in `{}`", num_files, &dir.display());
         Ok(Self {
             dir,

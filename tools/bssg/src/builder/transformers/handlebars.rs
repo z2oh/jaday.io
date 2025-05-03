@@ -1,3 +1,5 @@
+use jstd::prelude::*;
+
 use serde::Serialize;
 
 pub struct HandlebarsTransformer<'a, Ctx: Serialize> {
@@ -6,7 +8,7 @@ pub struct HandlebarsTransformer<'a, Ctx: Serialize> {
 }
 
 impl<'a, Ctx: Serialize> crate::builder::transformers::Transformer for HandlebarsTransformer<'a, Ctx> {
-    fn transform(&self, input: String) -> anyhow::Result<String> {
+    fn transform(&self, input: String) -> Result<String> {
         Ok(self.reg.render_template(&input, &self.ctx)?)
     }
 }
