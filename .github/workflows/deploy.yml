@@ -16,7 +16,7 @@ jobs:
     
     - name: bssg
       working-directory: ./tools/bssg
-      run: cargo run
+      run: cargo run -- --www-path "${{ github.workspace }}/www" --out-path "${{ github.workspace }}/workdir/www_out"
 
     - name: Deploy
       uses: s0/git-publish-subdir-action@develop
