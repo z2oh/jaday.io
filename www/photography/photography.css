@@ -145,6 +145,10 @@ div.justified-gallery > .jg-entry-visible > img {
     flex-direction: row;
 }
 
+.pswp__dynamic-caption--below > .image-caption {
+    margin-left: auto;
+}
+
 .pswp__dynamic-caption--below > .exif {
     margin-left: auto;
     margin-top: 0;
