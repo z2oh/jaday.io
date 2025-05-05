@@ -45,7 +45,7 @@ body {
     margin-right: 0px;
 }
 
-/* Shown in lightbox */
+/* Shown in lightbox dynamic caption */
 .image-name {
     font-size: calc(1.1rem);
     font-family: "SUSE Medium", sans-serif;
@@ -57,8 +57,7 @@ body {
     margin-right: 0px;
 }
 
-/* Shown in lightbox */
-.image-caption {
+.image-location {
     font-size: calc(0.8rem);
     font-family: "SUSE Regular", sans-serif;
     color: #ccc;
@@ -67,6 +66,31 @@ body {
     margin-top: 0px;
     margin-bottom: 0px;
     margin-right: 0px;
+}
+
+.image-datetime {
+    font-size: calc(0.8rem);
+    font-family: "SUSE Regular", sans-serif;
+    color: #ccc;
+
+    margin-left: 1rem;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+}
+
+.image-caption {
+    font-size: calc(0.9rem);
+    font-family: "SUSE Regular", sans-serif;
+    color: #fff;
+    text-align: justify;
+
+    margin-left: clamp(16px, 30px, 5%);
+    margin-top: clamp(5px, 16px, 5%);
+    margin-bottom: 0px;
+    margin-right: clamp(16px, 30px, 5%);
+
+    max-width: 66%;
 }
 
 .gallery-divider {

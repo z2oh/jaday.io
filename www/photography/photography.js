@@ -58,11 +58,11 @@ async function loadManifestAndRender(galleryTitle, gallerySubtitle, pathToGaller
         header.innerHTML = entry.name
         
         const location = document.createElement('h3');
-        location.className = 'image-caption';
+        location.className = 'image-location';
         location.innerHTML = entry.location
 
         const datetime = document.createElement('h3');
-        datetime.className = 'image-caption';
+        datetime.className = 'image-datetime';
         datetime.innerHTML = entry.datetime
 
         const subHeader = document.createElement('h3');
