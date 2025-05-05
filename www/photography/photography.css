@@ -164,3 +164,18 @@ div.justified-gallery > .jg-entry-visible > img {
     margin-left: 1rem;
     margin-right: 0;
 }
+
+/* Caption when hovering justified gallery thumbnail */
+.justified-gallery > a > .jg-caption {
+    font-family: "SUSE Medium", sans-serif;
+    font-size: calc(0.9rem);
+    background-color: transparent;
+    transition: opacity 100ms ease-in;
+    opacity: 0;
+    display: initial;
+}
+
+.justified-gallery > a > .jg-caption.jg-caption-visible {
+    transition: opacity 100ms ease-in;
+    opacity: 1;
+}
