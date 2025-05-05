@@ -29,7 +29,10 @@ pub struct Builder {
 }
 
 impl Builder {
-    pub fn new(www_path: PathBuf, out_path: PathBuf) -> Result<Builder> {
+    pub fn new<P: AsRef<Path>>(www_path: P, out_path: P) -> Result<Builder> {
+        let www_path = www_path.as_ref().to_path_buf();
+        let out_path = out_path.as_ref().to_path_buf();
+
         if !www_path.is_absolute() || !out_path.is_absolute() {
             return Err(anyhow!(
                 "www_path.is_absolute(): {}; out_path.is_absolute(): {}",
