@@ -137,7 +137,7 @@ async function loadManifestAndRender(galleryTitle, gallerySubtitle, pathToGaller
                 } else if (Math.max(width, height) <= 1024) {
                     return [...parts, `1l_${name}${ext}`].join('/')
                 } else {
-                    return currentPath
+                    return [...parts, `${name}${ext}`].join('/')
                 }
             }
         });
