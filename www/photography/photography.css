@@ -112,9 +112,11 @@ div.justified-gallery > .jg-entry-visible > img {
     display: flex;
     flex-direction: column;
     font-family: "SUSE Medium", sans-serif;
+    font-size: calc(0.8rem);
+    height: fit-content;
 }
 
-/* Layout dynamic caption differently when it is below the image */
+/* Layout dynamic caption differently based on whether it is beside or below the image */
 .pswp__dynamic-caption--aside {
     display: flex;
     flex-direction: column;
@@ -126,8 +128,6 @@ div.justified-gallery > .jg-entry-visible > img {
 }
 
 .pswp__dynamic-caption--below > .exif {
-    flex-wrap: wrap;
-    flex-direction: row;
     margin-left: auto;
     margin-top: 0;
     margin-right: 0;
@@ -136,7 +136,6 @@ div.justified-gallery > .jg-entry-visible > img {
 
 .pswp__dynamic-caption--below > .exif > .exif-row {
     flex-direction: row-reverse;
-    width: 50%;
 }
 
 .pswp__dynamic-caption--below > .exif > .exif-row > .exif-icon {
