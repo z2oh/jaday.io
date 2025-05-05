@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>jaday.io - photography</title>
+    <link rel="stylesheet" href="/photography/photoswipe/photoswipe.css">
+    <link rel="stylesheet" href="/photography/photoswipe/photoswipe-dynamic-caption-plugin.css">
+    <link rel="stylesheet" href="/photography/justifiedGallery/justifiedGallery.min.css">
+    <link rel="stylesheet" href="/photography/photography2.css" type="text/css" media="all" />
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="/photography/photography.js"></script>
+    <script src="/photography/justifiedGallery/jquery.justifiedGallery.min.js"></script>
+
+    <script type="module">
+        import PhotoSwipeLightbox from './photoswipe/photoswipe-lightbox.esm.js';
+        import PhotoSwipeDynamicCaption from 'https://unpkg.com/photoswipe-dynamic-caption-plugin/photoswipe-dynamic-caption-plugin.esm.js';
+        
+        const lightbox = new PhotoSwipeLightbox({
+          gallery: '#gallery-wrapper',
+          children: '.gallery > .gallery-collection > a',
+          pswpModule: () => import('./photoswipe/photoswipe.esm.js'),
+    
+          paddingFn: (viewportSize) => {
+            return {
+              top: 30, bottom: 30, left: 30, right: 30
+            }
+          },
+        });
+        
+        const captionPlugin = new PhotoSwipeDynamicCaption(lightbox, {
+          type: 'auto',
+        });
+        
+        lightbox.init();
+    </script>
+
+</head>
+
+<body>
+    <div id="gallery-wrapper">
+    </div>
+</body>
+</html>

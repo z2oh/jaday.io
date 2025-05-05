@@ -1,0 +1,116 @@
+/* Bring in font assets */
+@font-face {
+    font-family: "SUSE Regular";
+    src: url('/assets/fonts/SUSE-Regular.ttf');
+}
+
+@font-face {
+    font-family: "SUSE Medium";
+    src: url('/assets/fonts/SUSE-Medium.ttf');
+}
+
+/* Setup base page layout */
+html,
+body {
+    margin: 0;
+    height: 100%;
+
+    /* Slight noise texture on background */
+    background-color: #1a1a1a;
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAHklEQVQoU2NkQAOYmRkYGBg+z0AEYBxVSFUDDAwA2y0HAtVOrjQAAAAASUVORK5CYII=");
+    background-repeat: repeat;
+}
+
+/* The header, usually a title, of a collection */
+.collection-header {
+    font-size: calc(2rem);
+    font-family: "SUSE Medium", sans-serif;
+    color: #a0a0a0;
+
+    margin-left: 1rem;
+    margin-top: 8px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+}
+
+/* The subheader, usually a date, of a collection */
+.collection-subheader {
+    font-size: calc(1rem);
+    font-family: "SUSE Regular", sans-serif;
+    color: #808080;
+
+    margin-left: 1rem;
+    margin-top: 0px;
+    margin-bottom: 8px;
+    margin-right: 0px;
+}
+
+/* Shown in lightbox */
+.image-name {
+    font-size: calc(1.1rem);
+    font-family: "SUSE Medium", sans-serif;
+    color: #fff;
+
+    margin-left: 1rem;
+    margin-top: 8px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+}
+
+/* Shown in lightbox */
+.image-caption {
+    font-size: calc(0.8rem);
+    font-family: "SUSE Regular", sans-serif;
+    color: #ccc;
+
+    margin-left: 1rem;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+}
+
+.gallery-divider {
+    border: none;
+    border-top: 1px dotted rgba(255, 255, 255, 0.1);
+    width: 100%;
+}
+
+div.justified-gallery > .jg-entry-visible {
+    transition:
+      width 0.2s ease,
+      height 0.2s ease,
+      top 0.2s ease,
+      left 0.2s ease;
+    will-change: width, height, top, left;
+}
+  
+div.justified-gallery > .jg-entry-visible > img {
+    transition:
+        width 0.2s ease,
+        height 0.2s ease,
+        margin-top 0.2s ease,
+        margin-left 0.2s ease;
+    will-change: width, height, margin-top, margin-left;
+}
+
+.exif-icon {
+    max-height: 1rem;
+    margin-right: 1rem;
+    /* equivalent to #fafafa for recoloring svg's. see https://isotropic.co/tool/hex-color-to-css-filter/ */
+    filter: invert(100%) sepia(76%) saturate(1%) hue-rotate(321deg) brightness(104%) contrast(96%);
+}
+
+.exif-row {
+    display: flex;
+    align-items: center;
+    text-wrap: nowrap;
+}
+
+.exif {
+    margin: 16px;
+    width: 50%;
+    float: left;
+    display: flex;
+    flex-direction: column;
+    font-family: "SUSE Medium", sans-serif;
+}
