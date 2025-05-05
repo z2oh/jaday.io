@@ -168,7 +168,9 @@ class PhotoSwipeDynamicCaption {
         captionEl.style.top = y + 'px';
     }
 
-    
+    // This change diverges from upstream; I want the caption box to actually grow to max size
+    // in order to layout the caption correctly, and I couldn't figure out a better way to make
+    // that happen except for setting min-width.
     setCaptionWidth(captionEl, width) {
         if (!width) {
             captionEl.style.removeProperty('width');
