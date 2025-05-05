@@ -148,15 +148,16 @@ async function loadManifestAndRender(galleryTitle, gallerySubtitle, pathToGaller
     });
 }
 
-// Space out load calls
-loadManifestAndRender('Los Angeles and Joshua Tree', 'February 2025', '2025_02_los_angeles_and_joshua_tree')
-setTimeout(() => {
-    loadManifestAndRender('San Francisco Sunsets', 'Autumn 2024', '2024_autumn_sunsets')
-}, 500)
-setTimeout(() => {
-    loadManifestAndRender('Utah National Parks', 'March 2023', '2023_03_utah_national_parks')
-}, 1000)
-
+document.addEventListener("DOMContentLoaded", function () {
+    // Space out load calls
+    loadManifestAndRender('Los Angeles and Joshua Tree', 'February 2025', '2025_02_los_angeles_and_joshua_tree')
+    setTimeout(() => {
+        loadManifestAndRender('San Francisco Sunsets', 'Autumn 2024', '2024_autumn_sunsets')
+    }, 500)
+    setTimeout(() => {
+        loadManifestAndRender('Utah National Parks', 'March 2023', '2023_03_utah_national_parks')
+    }, 1500)
+});
 /* infinite scroll logic?
 
 let start = 0;
