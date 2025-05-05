@@ -168,12 +168,14 @@ class PhotoSwipeDynamicCaption {
         captionEl.style.top = y + 'px';
     }
 
-
+    
     setCaptionWidth(captionEl, width) {
         if (!width) {
             captionEl.style.removeProperty('width');
+            captionEl.style.removeProperty('min-width');
         } else {
             captionEl.style.width = width + 'px';
+            captionEl.style.minWidth = width + 'px';
         }
     }
 

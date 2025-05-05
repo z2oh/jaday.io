@@ -108,9 +108,37 @@ div.justified-gallery > .jg-entry-visible > img {
 
 .exif {
     margin: 16px;
-    width: 50%;
-    float: left;
     display: flex;
     flex-direction: column;
     font-family: "SUSE Medium", sans-serif;
+}
+
+/* Layout dynamic caption differently when it is below the image */
+.pswp__dynamic-caption--aside {
+    display: flex;
+    flex-direction: column;
+}
+
+.pswp__dynamic-caption--below {
+    display: flex;
+    flex-direction: row;
+}
+
+.pswp__dynamic-caption--below > .exif {
+    flex-wrap: wrap;
+    flex-direction: row;
+    margin-left: auto;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+}
+
+.pswp__dynamic-caption--below > .exif > .exif-row {
+    flex-direction: row-reverse;
+    width: 50%;
+}
+
+.pswp__dynamic-caption--below > .exif > .exif-row > .exif-icon {
+    margin-left: 1rem;
+    margin-right: 0;
 }

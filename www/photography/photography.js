@@ -50,6 +50,9 @@ async function loadManifestAndRender(galleryTitle, gallerySubtitle, pathToGaller
         const captionWrapper = document.createElement('div');
         captionWrapper.className = 'pswp-caption-content';
 
+        const titleBox = document.createElement('div')
+        titleBox.className = 'title-box'
+
         const header = document.createElement('h2');
         header.className = 'image-name';
         header.innerHTML = entry.name
@@ -93,9 +96,10 @@ async function loadManifestAndRender(galleryTitle, gallerySubtitle, pathToGaller
       exifDiv.appendChild(makeSpan('camera', 'photo_camera_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', entry.exif.camera));
       exifDiv.appendChild(makeSpan('lens', 'circle_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', entry.exif.lens));
   
-      captionWrapper.appendChild(header)
-      captionWrapper.appendChild(location)
-      captionWrapper.appendChild(datetime)
+      titleBox.appendChild(header)
+      titleBox.appendChild(location)
+      titleBox.appendChild(datetime)
+      captionWrapper.appendChild(titleBox)
       captionWrapper.appendChild(subHeader)
       captionWrapper.appendChild(exifDiv);
   
