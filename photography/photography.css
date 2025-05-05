@@ -45,7 +45,7 @@ body {
     margin-right: 0px;
 }
 
-/* Shown in lightbox */
+/* Shown in lightbox dynamic caption */
 .image-name {
     font-size: calc(1.1rem);
     font-family: "SUSE Medium", sans-serif;
@@ -57,8 +57,7 @@ body {
     margin-right: 0px;
 }
 
-/* Shown in lightbox */
-.image-caption {
+.image-location {
     font-size: calc(0.8rem);
     font-family: "SUSE Regular", sans-serif;
     color: #ccc;
@@ -67,6 +66,31 @@ body {
     margin-top: 0px;
     margin-bottom: 0px;
     margin-right: 0px;
+}
+
+.image-datetime {
+    font-size: calc(0.8rem);
+    font-family: "SUSE Regular", sans-serif;
+    color: #ccc;
+
+    margin-left: 1rem;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+}
+
+.image-caption {
+    font-size: calc(0.9rem);
+    font-family: "SUSE Regular", sans-serif;
+    color: #fff;
+    text-align: justify;
+
+    margin-left: clamp(16px, 30px, 5%);
+    margin-top: clamp(5px, 16px, 5%);
+    margin-bottom: 0px;
+    margin-right: clamp(16px, 30px, 5%);
+
+    max-width: 66%;
 }
 
 .gallery-divider {
@@ -91,6 +115,7 @@ div.justified-gallery > .jg-entry-visible > img {
         margin-top 0.2s ease,
         margin-left 0.2s ease;
     will-change: width, height, margin-top, margin-left;
+    border-radius: 4px;
 }
 
 .exif-icon {
@@ -111,9 +136,11 @@ div.justified-gallery > .jg-entry-visible > img {
     display: flex;
     flex-direction: column;
     font-family: "SUSE Medium", sans-serif;
+    font-size: calc(0.8rem);
+    height: fit-content;
 }
 
-/* Layout dynamic caption differently when it is below the image */
+/* Layout dynamic caption differently based on whether it is beside or below the image */
 .pswp__dynamic-caption--aside {
     display: flex;
     flex-direction: column;
@@ -125,8 +152,6 @@ div.justified-gallery > .jg-entry-visible > img {
 }
 
 .pswp__dynamic-caption--below > .exif {
-    flex-wrap: wrap;
-    flex-direction: row;
     margin-left: auto;
     margin-top: 0;
     margin-right: 0;
@@ -135,7 +160,6 @@ div.justified-gallery > .jg-entry-visible > img {
 
 .pswp__dynamic-caption--below > .exif > .exif-row {
     flex-direction: row-reverse;
-    width: 50%;
 }
 
 .pswp__dynamic-caption--below > .exif > .exif-row > .exif-icon {
