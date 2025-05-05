@@ -155,6 +155,9 @@ document.addEventListener("DOMContentLoaded", function () {
         loadManifestAndRender('San Francisco Sunsets', 'Autumn 2024', '2024_autumn_sunsets')
     }, 500)
     setTimeout(() => {
+        loadManifestAndRender('Crater Lake National Park', 'October 2023', '2023_10_crater_lake')
+    }, 1000)
+    setTimeout(() => {
         loadManifestAndRender('Utah National Parks', 'March 2023', '2023_03_utah_national_parks')
     }, 1500)
 });
