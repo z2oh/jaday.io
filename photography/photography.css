@@ -83,14 +83,11 @@ body {
     font-size: calc(0.9rem);
     font-family: "SUSE Regular", sans-serif;
     color: #fff;
-    text-align: justify;
 
     margin-left: clamp(16px, 30px, 5%);
     margin-top: clamp(5px, 16px, 5%);
     margin-bottom: 0px;
     margin-right: clamp(16px, 30px, 5%);
-
-    max-width: 66%;
 }
 
 div.justified-gallery > .jg-entry-visible {
@@ -147,6 +144,9 @@ div.justified-gallery > .jg-entry-visible > img {
 
 .pswp__dynamic-caption--below > .image-caption {
     margin-left: auto;
+    padding-left: 16px;
+    text-align: justify;
+    max-width: 66%;
 }
 
 .pswp__dynamic-caption--below > .exif {
