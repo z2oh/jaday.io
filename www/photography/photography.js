@@ -25,9 +25,6 @@ async function loadManifestAndRender(galleryTitle, gallerySubtitle, pathToGaller
     subHeader.className = 'collection-subheader'
     subHeader.innerHTML = gallerySubtitle
 
-    const divider = document.createElement('hr')
-    divider.className = 'gallery-divider'
-
     const galleryCollection = document.createElement('div')
     galleryCollection.className = 'gallery-collection'
     galleryCollection.id = 'gallery-collection-' + pathToGallery
@@ -110,7 +107,6 @@ async function loadManifestAndRender(galleryTitle, gallerySubtitle, pathToGaller
     
     gallery.appendChild(header)
     gallery.appendChild(subHeader)
-    gallery.appendChild(divider)
     gallery.appendChild(galleryCollection)
 
     container.appendChild(gallery)

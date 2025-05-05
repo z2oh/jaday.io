@@ -23,9 +23,9 @@ body {
 
 /* The header, usually a title, of a collection */
 .collection-header {
-    font-size: calc(2rem);
+    font-size: calc(1.5rem);
     font-family: "SUSE Medium", sans-serif;
-    color: #a0a0a0;
+    color: #fff;
 
     margin-left: 1rem;
     margin-top: 8px;
@@ -35,9 +35,9 @@ body {
 
 /* The subheader, usually a date, of a collection */
 .collection-subheader {
-    font-size: calc(1rem);
+    font-size: calc(0.9rem);
     font-family: "SUSE Regular", sans-serif;
-    color: #808080;
+    color: #eee;
 
     margin-left: 1rem;
     margin-top: 0px;
@@ -91,12 +91,6 @@ body {
     margin-right: clamp(16px, 30px, 5%);
 
     max-width: 66%;
-}
-
-.gallery-divider {
-    border: none;
-    border-top: 1px dotted rgba(255, 255, 255, 0.1);
-    width: 100%;
 }
 
 div.justified-gallery > .jg-entry-visible {
