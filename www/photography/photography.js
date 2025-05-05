@@ -117,6 +117,7 @@ async function loadManifestAndRender(galleryTitle, gallerySubtitle, pathToGaller
             margins: 4,
             waitThumnailsLoad: true,
             lastRow: 'nojustify',
+            justifyThreshold: .33,
             thumbnailPath: function (currentPath, width, height, image) {
                 const parts = currentPath.split('/');
                 const filename = parts.pop();
