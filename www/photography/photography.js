@@ -41,7 +41,7 @@ async function loadManifestAndRender(galleryTitle, gallerySubtitle, pathToGaller
 
         const img = document.createElement('img');
         img.className = entry.width > entry.height ? 'is-landscape' : 'is-portrait';
-        img.src = image_url;
+        img.src = image_small_thumbnail_url;
         img.alt = entry.name || entry.image;
 
         const captionWrapper = document.createElement('div');
@@ -111,20 +111,6 @@ async function loadManifestAndRender(galleryTitle, gallerySubtitle, pathToGaller
 
     container.appendChild(gallery)
 
-    function addPrefixToFilename(path, prefix) {
-        const parts = path.split('/');
-        const filename = parts.pop(); // "abc.jpg"
-
-        const dotIndex = filename.lastIndexOf('.');
-        if (dotIndex === -1) return path; // no extension, skip
-
-        const name = filename.slice(0, dotIndex);   // "abc"
-        const ext = filename.slice(dotIndex);       // ".jpg"
-
-        const newFilename = `${prefix}${name}${ext}`;
-        return [...parts, newFilename].join('/');
-    }
-
     requestAnimationFrame(() => {
         $('#gallery-collection-' + pathToGallery).justifiedGallery({
             rowHeight : 400,
@@ -132,10 +118,24 @@ async function loadManifestAndRender(galleryTitle, gallerySubtitle, pathToGaller
             waitThumnailsLoad: true,
             lastRow: 'nojustify',
             thumbnailPath: function (currentPath, width, height, image) {
+                const parts = currentPath.split('/');
+                const filename = parts.pop();
+
+                const dotIndex = filename.lastIndexOf('.');
+                if (dotIndex === -1) return path;
+                var name = filename.slice(0, dotIndex);
+                const ext = filename.slice(dotIndex);
+
+                // Remove leading 0s_ small-thumbnail prefixes. They are in the DOM so we
+                // prefetch the smallest files possible when loading a gallery.
+                if (name.startsWith("0s_")) {
+                    name = name.slice("0s_".length)
+                }
+
                 if (Math.max(width, height) <= 512) {
-                    return addPrefixToFilename(currentPath, "0s_");
+                    return [...parts, `0s_${name}${ext}`].join('/')
                 } else if (Math.max(width, height) <= 1024) {
-                    return addPrefixToFilename(currentPath, "1l_");
+                    return [...parts, `1l_${name}${ext}`].join('/')
                 } else {
                     return currentPath
                 }
