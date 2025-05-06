@@ -47,9 +47,7 @@
 
             // Load more images if we have fewer than 5 left.
             if (total - currentIndex < 5) {
-                debouncedLoadNextCollection().then(() => {
-                    pswp.refreshSlideContent(currentIndex);
-                });
+                debouncedLoadNextCollection();
             }
         });
 
