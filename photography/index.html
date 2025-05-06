@@ -15,25 +15,76 @@
     <script src="/photography/justifiedGallery/jquery.justifiedGallery.min.js"></script>
 
     <script type="module">
+        window.GalleryApp = {
+            lightbox: null,
+            items: [], // shared PhotoSwipe dataSource
+        };
+
         import PhotoSwipeLightbox from './photoswipe/photoswipe-lightbox.esm.js';
         import PhotoSwipeDynamicCaption from './photoswipe/photoswipe-dynamic-caption-plugin.esm.js';
         
         const lightbox = new PhotoSwipeLightbox({
-          gallery: '#gallery-wrapper',
-          children: '.gallery > .gallery-collection > a',
-          pswpModule: () => import('./photoswipe/photoswipe.esm.js'),
+            dataSource: window.GalleryApp.items,
+            pswpModule: () => import('./photoswipe/photoswipe.esm.js'),
     
-          paddingFn: (viewportSize) => {
-            return {
-              top: 30, bottom: 30, left: 30, right: 30
-            }
-          },
+            paddingFn: (viewportSize) => {
+                return {
+                    top: 8, bottom: 8, left: 8, right: 8
+                }
+            },
         });
         
         const captionPlugin = new PhotoSwipeDynamicCaption(lightbox, {
-          type: 'auto',
+            type: 'auto',
+            captionContent: (slide) => {
+                return slide.data.captionHTML;
+            },
         });
-        
+
+        lightbox.on('change', () => {
+            const currentIndex = lightbox.pswp.currIndex;
+            const total = lightbox.pswp.getNumItems();
+
+            // Load more images if we have fewer than 5 left.
+            if (total - currentIndex < 5) {
+                debouncedLoadNextCollection().then(() => {
+                    pswp.refreshSlideContent(currentIndex);
+                });
+            }
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    loadNextCollection();
+                }
+            });
+        }, {
+            rootMargin: '100px'
+        });
+
+        const sentinel = document.querySelector('#load-more-sentinel');
+        observer.observe(sentinel);
+
+        window.isLoading = false;
+
+        function loadUntilSentinelOffscreen() {
+            if (!sentinel) return;
+
+            const sentinelVisible = sentinel.getBoundingClientRect().top < window.innerHeight;
+
+            if (sentinelVisible && !window.isLoading) {
+                debouncedLoadNextCollection().then(() => {
+                    requestAnimationFrame(loadUntilSentinelOffscreen);
+                });
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            requestAnimationFrame(loadUntilSentinelOffscreen);
+        });
+                
+        window.GalleryApp.lightbox = lightbox;
         lightbox.init();
     </script>
 
@@ -42,5 +93,6 @@
 <body>
     <div id="gallery-wrapper">
     </div>
+    <div id="load-more-sentinel"></div>
 </body>
 </html>

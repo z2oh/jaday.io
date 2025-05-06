@@ -86,23 +86,39 @@ async function loadManifestAndRender(galleryTitle, gallerySubtitle, pathToGaller
             return span;
         };
   
-      exifDiv.appendChild(makeSpan('iso', 'equalizer_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', 'ISO', entry.exif.iso));
-      exifDiv.appendChild(makeSpan('shutter', 'shutter_speed_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', `${entry.exif.shutter_speed}s`));
-      exifDiv.appendChild(makeSpan('aperture', 'camera_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', 'f/', entry.exif.aperture));
-      exifDiv.appendChild(makeSpan('focal-length', 'arrows_outward_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', entry.exif.focal_length));
-      exifDiv.appendChild(makeSpan('camera', 'photo_camera_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', entry.exif.camera));
-      exifDiv.appendChild(makeSpan('lens', 'circle_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', entry.exif.lens));
-  
-      titleBox.appendChild(header)
-      titleBox.appendChild(location)
-      titleBox.appendChild(datetime)
-      captionWrapper.appendChild(titleBox)
-      captionWrapper.appendChild(subHeader)
-      captionWrapper.appendChild(exifDiv);
-  
-      a.appendChild(img);
-      a.appendChild(captionWrapper);
-      galleryCollection.appendChild(a);
+        exifDiv.appendChild(makeSpan('iso', 'equalizer_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', 'ISO', entry.exif.iso));
+        exifDiv.appendChild(makeSpan('shutter', 'shutter_speed_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', `${entry.exif.shutter_speed}s`));
+        exifDiv.appendChild(makeSpan('aperture', 'camera_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', 'f/', entry.exif.aperture));
+        exifDiv.appendChild(makeSpan('focal-length', 'arrows_outward_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', entry.exif.focal_length));
+        exifDiv.appendChild(makeSpan('camera', 'photo_camera_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', entry.exif.camera));
+        exifDiv.appendChild(makeSpan('lens', 'circle_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', entry.exif.lens));
+    
+        titleBox.appendChild(header)
+        titleBox.appendChild(location)
+        titleBox.appendChild(datetime)
+        captionWrapper.appendChild(titleBox)
+        captionWrapper.appendChild(subHeader)
+        captionWrapper.appendChild(exifDiv);
+    
+        a.appendChild(img);
+        a.appendChild(captionWrapper);
+        galleryCollection.appendChild(a);
+
+        const { items, lightbox } = window.GalleryApp;
+
+        const itemIndex = items.length;
+        items.push({
+            src: image_url,
+            width: entry.width,
+            height: entry.height,
+            alt: entry.name,
+            captionHTML: captionWrapper.innerHTML,
+        });
+
+        a.addEventListener('click', (e) => {
+            e.preventDefault();
+            lightbox.loadAndOpen(itemIndex);
+        });
     });
     
     gallery.appendChild(header)
@@ -145,35 +161,38 @@ async function loadManifestAndRender(galleryTitle, gallerySubtitle, pathToGaller
     });
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    // Space out load calls
-    loadManifestAndRender('Los Angeles and Joshua Tree', 'February 2025', '2025_02_los_angeles_and_joshua_tree')
-    setTimeout(() => {
-        loadManifestAndRender('San Francisco Sunsets', 'Autumn 2024', '2024_autumn_sunsets')
-    }, 500)
-    setTimeout(() => {
-        loadManifestAndRender('Crater Lake National Park', 'October 2023', '2023_10_crater_lake')
-    }, 1000)
-    setTimeout(() => {
-        loadManifestAndRender('Utah National Parks', 'March 2023', '2023_03_utah_national_parks')
-    }, 1500)
-});
-/* infinite scroll logic?
-
-let start = 0;
-const count = 10;
-
-window.addEventListener('scroll', () => {
-  const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 200;
-  if (nearBottom) {
-    loadManifestAndRender("gallery-container", "/assets/gallery/manifest.json", start, count);
-    start += count;
+function debouncePromise(fn, delay) {
+    let timeoutId;
+    let pendingPromise = null;
+    window.isLoading = true;
+  
+    return function (...args) {
+      if (timeoutId) clearTimeout(timeoutId);
+  
+      return new Promise((resolve, reject) => {
+        timeoutId = setTimeout(() => {
+          pendingPromise = fn(...args);
+          window.isLoading = false;
+          pendingPromise.then(resolve).catch(reject);
+        }, delay);
+      });
+    };
   }
-});
 
-window.addEventListener('DOMContentLoaded', () => {
-  loadManifestAndRender("gallery-container", "/assets/gallery/manifest.json", start, count);
-  start += count;
-});
+const debouncedLoadNextCollection = debouncePromise(loadNextCollection, 200);
 
-*/
+var collectionIndex = -1;
+const collections = [
+    ['Los Angeles and Joshua Tree', 'February 2025', '2025_02_los_angeles_and_joshua_tree'],
+    ['San Francisco Sunsets', 'Autumn 2024', '2024_autumn_sunsets'],
+    ['Crater Lake National Park', 'October 2023', '2023_10_crater_lake'],
+    ['Utah National Parks', 'March 2023', '2023_03_utah_national_parks']
+]
+
+async function loadNextCollection() {
+    collectionIndex += 1;
+    if (collectionIndex < collections.length) {
+        let collection = collections[collectionIndex]
+        loadManifestAndRender(collection[0], collection[1], collection[2])
+    }
+}
