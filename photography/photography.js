@@ -185,6 +185,7 @@ var collectionIndex = -1;
 const collections = [
     ['Los Angeles and Joshua Tree', 'February 2025', '2025_02_los_angeles_and_joshua_tree'],
     ['San Francisco Sunsets', 'Autumn 2024', '2024_autumn_sunsets'],
+    ['Angel Island', 'November 24th, 2023', '2023_11_24_angel_island'],
     ['Crater Lake National Park', 'October 2023', '2023_10_crater_lake'],
     ['Utah National Parks', 'March 2023', '2023_03_utah_national_parks']
 ]
