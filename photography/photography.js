@@ -192,6 +192,8 @@ const collections = [
     ['San Francisco Sunsets', 'Autumn 2024', '2024_autumn_sunsets'],
     ['Angel Island', 'November 24th, 2023', '2023_11_24_angel_island'],
     ['Crater Lake National Park', 'October 2023', '2023_10_crater_lake'],
+    ['Pinnacles National Park', 'April 2023', '2023_04_pinnacles'],
+    ['Ferry Building', 'April 9th, 2023', '2023_04_09_ferry_building'],
     ['Utah National Parks', 'March 2023', '2023_03_utah_national_parks']
 ]
 
