@@ -28,6 +28,12 @@ async function loadManifestAndRender(galleryTitle, gallerySubtitle, pathToGaller
     const galleryCollection = document.createElement('div')
     galleryCollection.className = 'gallery-collection'
     galleryCollection.id = 'gallery-collection-' + pathToGallery
+        
+    gallery.appendChild(header)
+    gallery.appendChild(subHeader)
+    gallery.appendChild(galleryCollection)
+
+    container.appendChild(gallery)
   
     manifest.forEach(entry => {
         const image_url = DATA_ROOT + pathToGallery + '/' + entry.image;
@@ -128,12 +134,6 @@ async function loadManifestAndRender(galleryTitle, gallerySubtitle, pathToGaller
             lightbox.loadAndOpen(itemIndex);
         });
     });
-    
-    gallery.appendChild(header)
-    gallery.appendChild(subHeader)
-    gallery.appendChild(galleryCollection)
-
-    container.appendChild(gallery)
 
     requestAnimationFrame(() => {
         $('#gallery-collection-' + pathToGallery).justifiedGallery({
@@ -191,7 +191,9 @@ const debouncedLoadNextCollection = debouncePromise(loadNextCollection, 200);
 
 var collectionIndex = -1;
 const collections = [
+    ['Chicago', 'May 2025', '2025_05_chicago'],
     ['Los Angeles and Joshua Tree', 'February 2025', '2025_02_los_angeles_and_joshua_tree'],
+    ['European Thanksgiving', 'November 2024', '2024_11_europe_trip'],
     ['San Francisco Sunsets', 'Autumn 2024', '2024_autumn_sunsets'],
     ['Angel Island', 'November 24th, 2023', '2023_11_24_angel_island'],
     ['Crater Lake National Park', 'October 2023', '2023_10_crater_lake'],
