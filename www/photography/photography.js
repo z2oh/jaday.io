@@ -64,7 +64,15 @@ async function loadManifestAndRender(galleryTitle, gallerySubtitle, pathToGaller
 
         const subHeader = document.createElement('h3');
         subHeader.className = 'image-caption';
-        subHeader.innerHTML = entry.caption
+        const resolvedCaption = entry.caption.replace(/\[([^\]]+)]\(([^)]+)\)/g, (match, text, key) => {
+            const matchExtra = entry.extras.find(extra => extra.includes(key));
+            if (matchExtra) {
+                const extraUrl = DATA_ROOT + pathToGallery + '/' + matchExtra;
+                return `<a href="${extraUrl}" target="_blank" rel="noopener noreferrer">${text}</a>`
+            }
+            return text;
+        });
+        subHeader.innerHTML = resolvedCaption
     
         const exifDiv = document.createElement('div');
         exifDiv.className = 'exif';
