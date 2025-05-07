@@ -189,6 +189,7 @@ const collections = [
     ['Chicago', 'May 2025', '2025_05_chicago'],
     ['Los Angeles and Joshua Tree', 'February 2025', '2025_02_los_angeles_and_joshua_tree'],
     ['Thanksgiving in Europe', 'November 2024', '2024_11_europe_trip'],
+    ['Labor Day in Jackson Hole', 'September 2024', '2024_09_grand_tetons_and_yellowstone'],
     ['San Francisco Sunsets', 'Autumn 2024', '2024_autumn_sunsets'],
     ['Angel Island', 'November 24th, 2023', '2023_11_24_angel_island'],
     ['Crater Lake National Park', 'October 2023', '2023_10_crater_lake'],
