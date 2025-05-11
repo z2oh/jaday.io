@@ -164,25 +164,26 @@ async function loadManifestAndRender(gallery, galleryTitle, gallerySubtitle, pat
     }, 0);
 }
 
-function debouncePromise(fn, delay) {
-    let timeoutId;
+// This function returns a function that, when called, will invoke the input function `fn` and set a cooldown
+// timer for `delay`ms during which additional calls are ignored.
+// In either case, the value returned by `fn` is returned.
+function debounceFn(fn, delay) {
     let pendingPromise = null;
-    window.isLoading = true;
+    let ready = true;
   
     return function (...args) {
-      if (timeoutId) clearTimeout(timeoutId);
-  
-      return new Promise((resolve, reject) => {
-        timeoutId = setTimeout(() => {
-          pendingPromise = fn(...args);
-          window.isLoading = false;
-          pendingPromise.then(resolve).catch(reject);
-        }, delay);
-      });
+        if (ready) {
+            ready = false;
+            pendingPromise = fn(...args);
+            setTimeout(() => {
+                ready = true;
+            }, delay);
+        }
+        return pendingPromise;
     };
-  }
+}
 
-const debouncedLoadNextCollection = debouncePromise(loadNextCollection, 200);
+const debouncedLoadNextCollection = debounceFn(loadNextCollection, 100);
 
 var collectionIndex = -1;
 const collections = [
