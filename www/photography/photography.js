@@ -174,9 +174,11 @@ function debounceFn(fn, delay) {
     return function (...args) {
         if (ready) {
             ready = false;
+            window.isLoading = true;
             pendingPromise = fn(...args);
             setTimeout(() => {
                 ready = true;
+                window.isLoading = false;
             }, delay);
         }
         return pendingPromise;
