@@ -66,15 +66,21 @@
 
         window.isLoading = false;
 
+        // This function only runs at initialization to push the sentry off the screen for the first time;
+        // after that, the sentinel observer above takes care of loading more collections.
         function loadUntilSentinelOffscreen() {
             if (!sentinel) return;
 
             const sentinelVisible = sentinel.getBoundingClientRect().top < window.innerHeight;
 
+            // If we are not loading, kick off a new collection load.
+            // Otherwise, keep running this function every frame until `sentinelVisible` is false.
             if (sentinelVisible && !window.isLoading) {
                 debouncedLoadNextCollection().then(() => {
                     requestAnimationFrame(loadUntilSentinelOffscreen);
                 });
+            } else if (sentinelVisible) {
+                requestAnimationFrame(loadUntilSentinelOffscreen);
             }
         }
 
