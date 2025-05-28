@@ -198,6 +198,7 @@ const debouncedLoadNextCollection = debounceFn(loadNextCollection, 100);
 
 var collectionIndex = -1;
 const collections = [
+    ['Mendocino', 'Memorial Day Weekend 2025', '2025_25_mendocino'],
     ['Chicago', 'May 2025', '2025_05_chicago'],
     ['Los Angeles and Joshua Tree', 'February 2025', '2025_02_los_angeles_and_joshua_tree'],
     ['Thanksgiving in Europe', 'November 2024', '2024_11_europe_trip'],
