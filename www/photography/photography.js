@@ -23,7 +23,7 @@ async function loadManifestAndRender(gallery, galleryTitle, gallerySubtitle, pat
     const galleryCollection = document.createElement('div')
     galleryCollection.className = 'gallery-collection'
     galleryCollection.id = 'gallery-collection-' + pathToGallery
-        
+
     gallery.appendChild(header)
     gallery.appendChild(subHeader)
     gallery.appendChild(galleryCollection)
@@ -54,7 +54,7 @@ async function loadManifestAndRender(gallery, galleryTitle, gallerySubtitle, pat
                 const header = document.createElement('h2');
                 header.className = 'image-name';
                 header.innerHTML = entry.name
-                
+
                 const location = document.createElement('h3');
                 location.className = 'image-location';
                 location.innerHTML = entry.location
@@ -74,7 +74,7 @@ async function loadManifestAndRender(gallery, galleryTitle, gallerySubtitle, pat
                     return text;
                 });
                 subHeader.innerHTML = resolvedCaption
-            
+
                 const exifDiv = document.createElement('div');
                 exifDiv.className = 'exif';
 
@@ -82,33 +82,33 @@ async function loadManifestAndRender(gallery, galleryTitle, gallerySubtitle, pat
                     const span = document.createElement('span');
                     span.className = 'exif-row';
                     span.id = id;
-            
+
                     const imgIcon = document.createElement('img');
                     imgIcon.src = `/assets/svg/exif/${icon}`;
                     imgIcon.className = 'exif-icon';
-            
+
                     const text = document.createElement('span');
                     text.textContent = `${label} ${value}`;
-            
+
                     span.appendChild(imgIcon);
                     span.appendChild(text);
                     return span;
                 };
-        
+
                 exifDiv.appendChild(makeSpan('iso', 'equalizer_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', 'ISO', entry.exif.iso));
                 exifDiv.appendChild(makeSpan('shutter', 'shutter_speed_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', `${entry.exif.shutter_speed}s`));
                 exifDiv.appendChild(makeSpan('aperture', 'camera_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', 'f/', entry.exif.aperture));
                 exifDiv.appendChild(makeSpan('focal-length', 'arrows_outward_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', entry.exif.focal_length));
                 exifDiv.appendChild(makeSpan('camera', 'photo_camera_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', entry.exif.camera));
                 exifDiv.appendChild(makeSpan('lens', 'circle_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', entry.exif.lens));
-            
+
                 titleBox.appendChild(header)
                 titleBox.appendChild(location)
                 titleBox.appendChild(datetime)
                 captionWrapper.appendChild(titleBox)
                 captionWrapper.appendChild(subHeader)
                 captionWrapper.appendChild(exifDiv);
-            
+
                 a.appendChild(img);
                 a.appendChild(captionWrapper);
                 galleryCollection.appendChild(a);
@@ -133,9 +133,9 @@ async function loadManifestAndRender(gallery, galleryTitle, gallerySubtitle, pat
             // Wait one frame for the DOM to be added.
             requestAnimationFrame(() => {
                 $('#gallery-collection-' + pathToGallery).justifiedGallery({
-                    rowHeight : 400,
+                    rowHeight: 400,
                     margins: 4,
-                    waitThumnailsLoad: true,
+                    waitThumbnailsLoad: true,
                     lastRow: 'nojustify',
                     justifyThreshold: .33,
                     thumbnailPath: function (currentPath, width, height, image) {
@@ -179,7 +179,7 @@ async function loadManifestAndRender(gallery, galleryTitle, gallerySubtitle, pat
 function debounceFn(fn, delay) {
     let pendingPromise = null;
     let ready = true;
-  
+
     return function (...args) {
         if (ready) {
             ready = false;
