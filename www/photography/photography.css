@@ -93,7 +93,7 @@ body {
     margin-right: clamp(16px, 30px, 5%);
 }
 
-div.justified-gallery > .jg-entry-visible {
+div.justified-gallery>.jg-entry-visible {
     transition:
       width 0.2s ease,
       height 0.2s ease,
@@ -102,7 +102,7 @@ div.justified-gallery > .jg-entry-visible {
     will-change: width, height, top, left;
 }
   
-div.justified-gallery > .jg-entry-visible > img {
+div.justified-gallery>.jg-entry-visible>img {
     transition:
         width 0.2s ease,
         height 0.2s ease,
@@ -145,31 +145,31 @@ div.justified-gallery > .jg-entry-visible > img {
     flex-direction: row;
 }
 
-.pswp__dynamic-caption--below > .image-caption {
+.pswp__dynamic-caption--below>.image-caption {
     margin-left: auto;
     padding-left: 16px;
     text-align: justify;
     max-width: 66%;
 }
 
-.pswp__dynamic-caption--below > .exif {
+.pswp__dynamic-caption--below>.exif {
     margin-left: auto;
     margin-top: 0;
     margin-right: 0;
     margin-bottom: 0;
 }
 
-.pswp__dynamic-caption--below > .exif > .exif-row {
+.pswp__dynamic-caption--below>.exif>.exif-row {
     flex-direction: row-reverse;
 }
 
-.pswp__dynamic-caption--below > .exif > .exif-row > .exif-icon {
+.pswp__dynamic-caption--below>.exif>.exif-row>.exif-icon {
     margin-left: 1rem;
     margin-right: 0;
 }
 
 /* Caption when hovering justified gallery thumbnail */
-.justified-gallery > a > .jg-caption {
+.justified-gallery>a>.jg-caption {
     font-family: "SUSE Medium", sans-serif;
     font-size: calc(0.9rem);
     background-color: transparent;
@@ -178,7 +178,7 @@ div.justified-gallery > .jg-entry-visible > img {
     display: initial;
 }
 
-.justified-gallery > a > .jg-caption.jg-caption-visible {
+.justified-gallery>a>.jg-caption.jg-caption-visible {
     transition: opacity 100ms ease-in;
     opacity: 1;
 }
