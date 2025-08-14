@@ -23,18 +23,19 @@
 
         import PhotoSwipeLightbox from './photoswipe/photoswipe-lightbox.esm.js';
         import PhotoSwipeDynamicCaption from './photoswipe/photoswipe-dynamic-caption-plugin.esm.js';
-        
+        import PhotoSwipeVideoPlugin from './photoswipe/photoswipe-video-plugin.esm.js';
+
         const lightbox = new PhotoSwipeLightbox({
             dataSource: window.GalleryApp.items,
             pswpModule: () => import('./photoswipe/photoswipe.esm.js'),
-    
+
             paddingFn: (viewportSize) => {
                 return {
                     top: 8, bottom: 8, left: 8, right: 8
                 }
             },
         });
-        
+
         const captionPlugin = new PhotoSwipeDynamicCaption(lightbox, {
             type: 'auto',
             captionContent: (slide) => {
@@ -42,57 +43,26 @@
             },
         });
 
+        const videoPlugin = new PhotoSwipeVideoPlugin(lightbox, {});
+
         lightbox.on('change', () => {
             const currentIndex = lightbox.pswp.currIndex;
             const total = lightbox.pswp.getNumItems();
 
             // Load more images if we have fewer than 5 left.
             if (total - currentIndex < 5) {
-                debouncedLoadNextCollection();
+                // Tick the renderer, and bypass the sentinel check.
+                tickRender(true);
             }
         });
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    debouncedLoadNextCollection();
-                }
-            });
-        }, {
-            rootMargin: '100px'
-        });
-
-        const sentinel = document.querySelector('#load-more-sentinel');
-        observer.observe(sentinel);
-
-        window.isLoading = false;
-
-        // This function only runs at initialization to push the sentry off the screen for the first time;
-        // after that, the sentinel observer above takes care of loading more collections.
-        function loadUntilSentinelOffscreen() {
-            if (!sentinel) return;
-
-            const sentinelVisible = sentinel.getBoundingClientRect().top < window.innerHeight;
-
-            // If we are not loading, kick off a new collection load.
-            // Otherwise, keep running this function every frame until `sentinelVisible` is false.
-            if (sentinelVisible && !window.isLoading) {
-                debouncedLoadNextCollection().then(() => {
-                    requestAnimationFrame(loadUntilSentinelOffscreen);
-                });
-            } else if (sentinelVisible) {
-                requestAnimationFrame(loadUntilSentinelOffscreen);
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            requestAnimationFrame(loadUntilSentinelOffscreen);
-        });
-                
         window.GalleryApp.lightbox = lightbox;
         lightbox.init();
-    </script>
 
+        window.addEventListener('DOMContentLoaded', () => {
+            tickRender();
+        });
+    </script>
 </head>
 
 <body>

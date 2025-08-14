@@ -95,14 +95,24 @@ body {
 
 div.justified-gallery>.jg-entry-visible {
     transition:
-      width 0.2s ease,
-      height 0.2s ease,
-      top 0.2s ease,
-      left 0.2s ease;
+        width 0.2s ease,
+        height 0.2s ease,
+        top 0.2s ease,
+        left 0.2s ease;
     will-change: width, height, top, left;
 }
-  
+
 div.justified-gallery>.jg-entry-visible>img {
+    transition:
+        width 0.2s ease,
+        height 0.2s ease,
+        margin-top 0.2s ease,
+        margin-left 0.2s ease;
+    will-change: width, height, margin-top, margin-left;
+    border-radius: 4px;
+}
+
+div.justified-gallery>.jg-entry-visible>video {
     transition:
         width 0.2s ease,
         height 0.2s ease,
