@@ -19,6 +19,9 @@ body {
     background-color: #1a1a1a;
     background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAHklEQVQoU2NkQAOYmRkYGBg+z0AEYBxVSFUDDAwA2y0HAtVOrjQAAAAASUVORK5CYII=");
     background-repeat: repeat;
+    background-size: cover;
+    background: #1a1a1a;
+    color: #1a1a1a;
 }
 
 /* The header, usually a title, of a collection */
