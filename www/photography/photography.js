@@ -1,12 +1,13 @@
 const DATA_ROOT = "https://data.jaday.io/photos/"
 const MANIFEST_JSON = "/manifest.json"
 
+// Returns manifest JSON.
 async function loadManifest(pathToGallery) {
     let galleryUrl = DATA_ROOT + pathToGallery;
     let manifestUrl = galleryUrl + MANIFEST_JSON;
 
     const response = await fetch(manifestUrl);
-    return response.json()
+    return response.json();
 }
 
 function createJustifiedImageElement(pathToGallery, entry) {
