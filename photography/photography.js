@@ -1,5 +1,53 @@
+import PhotoSwipeLightbox from './photoswipe/photoswipe-lightbox.esm.js';
+import PhotoSwipeDynamicCaption from './photoswipe/photoswipe-dynamic-caption-plugin.esm.js';
+import PhotoSwipeVideoPlugin from './photoswipe/photoswipe-video-plugin.esm.js';
+
 const DATA_ROOT = "https://data.jaday.io/photos/"
 const MANIFEST_JSON = "/manifest.json"
+const COLLECTIONS_JSON = "collections.json"
+
+async function init() {
+    window.GalleryApp = {
+        lightbox: null,
+        items: [], // shared PhotoSwipe dataSource
+    };
+
+    const lightbox = new PhotoSwipeLightbox({
+        dataSource: window.GalleryApp.items,
+        pswpModule: () => import('./photoswipe/photoswipe.esm.js'),
+
+        paddingFn: (viewportSize) => {
+            return {
+                top: 8, bottom: 8, left: 8, right: 8
+            }
+        },
+    });
+
+    const captionPlugin = new PhotoSwipeDynamicCaption(lightbox, {
+        type: 'auto',
+        captionContent: (slide) => {
+            return slide.data.captionHTML;
+        },
+    });
+
+    const videoPlugin = new PhotoSwipeVideoPlugin(lightbox, {});
+
+    lightbox.on('change', () => {
+        const currentIndex = lightbox.pswp.currIndex;
+        const total = lightbox.pswp.getNumItems();
+
+        // Load more images if we have fewer than 5 left.
+        if (total - currentIndex < 5) {
+            // Tick the renderer, and bypass the sentinel check.
+            tickRender(true);
+        }
+    });
+
+    window.GalleryApp.lightbox = lightbox;
+    lightbox.init();
+
+    tickRender();
+}
 
 // Returns manifest JSON.
 async function loadManifest(pathToGallery) {
@@ -183,20 +231,8 @@ function createJustifiedVideoEntry(pathToGallery, entry) {
 }
 
 var cIndex = 0;
-const cs = [
-    { title: 'Mt. Davidson Timelapse', subtitle: 'August 8th, 2025', path: '2025_08_08_mt_davidson_timelapse' },
-    { title: 'Mendocino', subtitle: 'Memorial Day Weekend 2025', path: '2025_25_mendocino' },
-    { title: 'Chicago', subtitle: 'May 2025', path: '2025_05_chicago' },
-    { title: 'Los Angeles and Joshua Tree', subtitle: 'February 2025', path: '2025_02_los_angeles_and_joshua_tree' },
-    { title: 'Thanksgiving in Europe', subtitle: 'November 2024', path: '2024_11_europe_trip' },
-    { title: 'Labor Day in Jackson Hole', subtitle: 'September 2024', path: '2024_09_grand_teton_and_yellowstone' },
-    { title: 'San Francisco Sunsets', subtitle: 'Autumn 2024', path: '2024_autumn_sunsets' },
-    { title: 'Angel Island', subtitle: 'November 24th, 2023', path: '2023_11_24_angel_island' },
-    { title: 'Crater Lake National Park', subtitle: 'October 2023', path: '2023_10_crater_lake' },
-    { title: 'Pinnacles National Park', subtitle: 'April 2023', path: '2023_04_pinnacles' },
-    { title: 'Ferry Building', subtitle: 'April 9th, 2023', path: '2023_04_09_ferry_building' },
-    { title: 'Utah National Parks', subtitle: 'March 2023', path: '2023_03_utah_national_parks' }
-]
+const csp = await fetch(DATA_ROOT + COLLECTIONS_JSON);
+const cs = await csp.json();
 
 function addCollectionToLightbox(collection) {
     const { items, lightbox } = window.GalleryApp;
@@ -359,3 +395,5 @@ async function createGallery(collection) {
 
     return { galleryElement: galleryCollection, galleryEntryElements: galleryEntryElements, lightboxItems: lightboxItems };
 }
+
+await init();

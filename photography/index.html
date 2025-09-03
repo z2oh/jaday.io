@@ -13,56 +13,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="/photography/justifiedGallery/jquery.justifiedGallery.js"></script>
-    <script src="/photography/photography.js"></script>
-
-    <script type="module">
-        window.GalleryApp = {
-            lightbox: null,
-            items: [], // shared PhotoSwipe dataSource
-        };
-
-        import PhotoSwipeLightbox from './photoswipe/photoswipe-lightbox.esm.js';
-        import PhotoSwipeDynamicCaption from './photoswipe/photoswipe-dynamic-caption-plugin.esm.js';
-        import PhotoSwipeVideoPlugin from './photoswipe/photoswipe-video-plugin.esm.js';
-
-        const lightbox = new PhotoSwipeLightbox({
-            dataSource: window.GalleryApp.items,
-            pswpModule: () => import('./photoswipe/photoswipe.esm.js'),
-
-            paddingFn: (viewportSize) => {
-                return {
-                    top: 8, bottom: 8, left: 8, right: 8
-                }
-            },
-        });
-
-        const captionPlugin = new PhotoSwipeDynamicCaption(lightbox, {
-            type: 'auto',
-            captionContent: (slide) => {
-                return slide.data.captionHTML;
-            },
-        });
-
-        const videoPlugin = new PhotoSwipeVideoPlugin(lightbox, {});
-
-        lightbox.on('change', () => {
-            const currentIndex = lightbox.pswp.currIndex;
-            const total = lightbox.pswp.getNumItems();
-
-            // Load more images if we have fewer than 5 left.
-            if (total - currentIndex < 5) {
-                // Tick the renderer, and bypass the sentinel check.
-                tickRender(true);
-            }
-        });
-
-        window.GalleryApp.lightbox = lightbox;
-        lightbox.init();
-
-        window.addEventListener('DOMContentLoaded', () => {
-            tickRender();
-        });
-    </script>
+    <script type="module" src="/photography/photography.js"></script>
 </head>
 
 <body>
