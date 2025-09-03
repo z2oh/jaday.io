@@ -62,7 +62,7 @@ function createExifBlockElement(entry) {
     const exifDiv = document.createElement('div');
     exifDiv.className = 'exif';
 
-    const makeSpan = (id, icon, label, value) => {
+    const makeSpan = (id, icon, label, value, tooltipText = "") => {
         const span = document.createElement('span');
         span.className = 'exif-row';
         span.id = id;
@@ -74,15 +74,32 @@ function createExifBlockElement(entry) {
         const text = document.createElement('span');
         text.textContent = `${label} ${value}`;
 
+        if (tooltipText.length > 0) {
+            const tooltip = document.createElement('span');
+            tooltip.textContent = tooltipText;
+            tooltip.className = 'tooltip-text';
+
+            text.appendChild(tooltip);
+            text.classList.add('tooltip');
+        }
+
         span.appendChild(imgIcon);
         span.appendChild(text);
         return span;
     };
 
+    const manualLensApertureTooltip = 'This manual lens lacks electronics, meaning the aperture is not captured in EXIF metadata.'
+
     exifDiv.appendChild(makeSpan('iso', 'equalizer_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', 'ISO', entry.exif.iso));
     exifDiv.appendChild(makeSpan('shutter', 'shutter_speed_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', `${entry.exif.shutter_speed}s`));
-    exifDiv.appendChild(makeSpan('aperture', 'camera_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', 'f/', entry.exif.aperture));
-    exifDiv.appendChild(makeSpan('focal-length', 'arrows_outward_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', entry.exif.focal_length));
+    if (entry.exif.lens == "Laowa 4mm f/2.8 Fisheye") {
+        exifDiv.appendChild(makeSpan('aperture', 'camera_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', 'f/', '?', manualLensApertureTooltip));
+        // This lens always erroneously reports 21mm focal length in the EXIF.
+        exifDiv.appendChild(makeSpan('focal-length', 'arrows_outward_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', '4mm'));
+    } else {
+        exifDiv.appendChild(makeSpan('aperture', 'camera_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', 'f/', entry.exif.aperture));
+        exifDiv.appendChild(makeSpan('focal-length', 'arrows_outward_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', entry.exif.focal_length));
+    }
     exifDiv.appendChild(makeSpan('camera', 'photo_camera_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', entry.exif.camera));
     exifDiv.appendChild(makeSpan('lens', 'circle_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', entry.exif.lens));
 

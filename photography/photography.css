@@ -144,6 +144,29 @@ div.justified-gallery>.jg-entry-visible>video {
     height: fit-content;
 }
 
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted #fff;
+}
+
+.tooltip .tooltip-text {
+    visibility: hidden;
+    width: 20rem;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 12px;
+    padding: 12px 0;
+    position: absolute;
+    z-index: 1;
+    text-wrap: wrap;
+}
+
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+}
+
 /* Layout dynamic caption differently based on whether it is beside or below the image */
 .pswp__dynamic-caption--aside {
     display: flex;
