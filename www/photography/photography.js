@@ -231,20 +231,8 @@ function createJustifiedVideoEntry(pathToGallery, entry) {
 }
 
 var cIndex = 0;
-const cs = [
-    { title: 'Mt. Davidson Timelapse', subtitle: 'August 8th, 2025', path: '2025_08_08_mt_davidson_timelapse' },
-    { title: 'Mendocino', subtitle: 'Memorial Day Weekend 2025', path: '2025_25_mendocino' },
-    { title: 'Chicago', subtitle: 'May 2025', path: '2025_05_chicago' },
-    { title: 'Los Angeles and Joshua Tree', subtitle: 'February 2025', path: '2025_02_los_angeles_and_joshua_tree' },
-    { title: 'Thanksgiving in Europe', subtitle: 'November 2024', path: '2024_11_europe_trip' },
-    { title: 'Labor Day in Jackson Hole', subtitle: 'September 2024', path: '2024_09_grand_teton_and_yellowstone' },
-    { title: 'San Francisco Sunsets', subtitle: 'Autumn 2024', path: '2024_autumn_sunsets' },
-    { title: 'Angel Island', subtitle: 'November 24th, 2023', path: '2023_11_24_angel_island' },
-    { title: 'Crater Lake National Park', subtitle: 'October 2023', path: '2023_10_crater_lake' },
-    { title: 'Pinnacles National Park', subtitle: 'April 2023', path: '2023_04_pinnacles' },
-    { title: 'Ferry Building', subtitle: 'April 9th, 2023', path: '2023_04_09_ferry_building' },
-    { title: 'Utah National Parks', subtitle: 'March 2023', path: '2023_03_utah_national_parks' }
-]
+const csp = await fetch(DATA_ROOT + COLLECTIONS_JSON);
+const cs = await csp.json();
 
 function addCollectionToLightbox(collection) {
     const { items, lightbox } = window.GalleryApp;
