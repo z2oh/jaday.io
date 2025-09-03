@@ -1,5 +1,53 @@
+import PhotoSwipeLightbox from './photoswipe/photoswipe-lightbox.esm.js';
+import PhotoSwipeDynamicCaption from './photoswipe/photoswipe-dynamic-caption-plugin.esm.js';
+import PhotoSwipeVideoPlugin from './photoswipe/photoswipe-video-plugin.esm.js';
+
 const DATA_ROOT = "https://data.jaday.io/photos/"
 const MANIFEST_JSON = "/manifest.json"
+const COLLECTIONS_JSON = "collections.json"
+
+async function init() {
+    window.GalleryApp = {
+        lightbox: null,
+        items: [], // shared PhotoSwipe dataSource
+    };
+
+    const lightbox = new PhotoSwipeLightbox({
+        dataSource: window.GalleryApp.items,
+        pswpModule: () => import('./photoswipe/photoswipe.esm.js'),
+
+        paddingFn: (viewportSize) => {
+            return {
+                top: 8, bottom: 8, left: 8, right: 8
+            }
+        },
+    });
+
+    const captionPlugin = new PhotoSwipeDynamicCaption(lightbox, {
+        type: 'auto',
+        captionContent: (slide) => {
+            return slide.data.captionHTML;
+        },
+    });
+
+    const videoPlugin = new PhotoSwipeVideoPlugin(lightbox, {});
+
+    lightbox.on('change', () => {
+        const currentIndex = lightbox.pswp.currIndex;
+        const total = lightbox.pswp.getNumItems();
+
+        // Load more images if we have fewer than 5 left.
+        if (total - currentIndex < 5) {
+            // Tick the renderer, and bypass the sentinel check.
+            tickRender(true);
+        }
+    });
+
+    window.GalleryApp.lightbox = lightbox;
+    lightbox.init();
+
+    tickRender();
+}
 
 // Returns manifest JSON.
 async function loadManifest(pathToGallery) {
@@ -359,3 +407,5 @@ async function createGallery(collection) {
 
     return { galleryElement: galleryCollection, galleryEntryElements: galleryEntryElements, lightboxItems: lightboxItems };
 }
+
+await init();
