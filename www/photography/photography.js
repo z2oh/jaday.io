@@ -127,7 +127,9 @@ function createCaptionElement(pathToGallery, entry) {
 
     const subHeader = document.createElement('h3');
     subHeader.className = 'image-caption';
-    const resolvedCaption = entry.caption.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, key) => {
+
+    // Replace extra photo links, like [link to extra 1](extra_1) with anchor elements.
+    var resolvedCaption = entry.caption.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, key) => {
         const matchExtra = entry.extras.find(extra => extra.includes(key));
         if (matchExtra) {
             const extraUrl = DATA_ROOT + pathToGallery + '/' + matchExtra;
@@ -135,6 +137,12 @@ function createCaptionElement(pathToGallery, entry) {
         }
         return text;
     });
+
+    // Replace markdown-italicized text, like _this_, with emphasis elements.
+    resolvedCaption = resolvedCaption.replace(/(^|[^\\])_(.*?)_/g, (match, prefix, content) => {
+        return `${prefix}<em>${content}</em>`;
+    });
+
     subHeader.innerHTML = resolvedCaption
 
     titleBox.appendChild(header);
