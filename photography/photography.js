@@ -139,7 +139,7 @@ function createCaptionElement(pathToGallery, entry) {
     });
 
     // Replace markdown-italicized text, like _this_, with emphasis elements.
-    resolvedCaption = resolvedCaption.replace(/(^|[^\\])_(.*?)_/g, (match, prefix, content) => {
+    resolvedCaption = resolvedCaption.replace(/_([^\[\]]*?)_/g, (match, prefix, content) => {
         return `${prefix}<em>${content}</em>`;
     });
 
