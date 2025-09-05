@@ -131,12 +131,12 @@ function createCaptionElement(pathToGallery, entry) {
     var resolvedCaption = entry.caption;
 
     // Replace markdown-italicized text, like _this_, with emphasis elements.
-    resolvedCaption = resolvedCaption.replace(/_([^\[\]]*?)_/g, (match, prefix, content) => {
-        return `${prefix}<em>${content}</em>`;
+    resolvedCaption = resolvedCaption.replace(/_([^\[\]]*?)_/g, (_match, content) => {
+        return `<em>${content}</em>`;
     });
 
     // Replace extra photo links, like [link to extra 1](extra_1) with anchor elements.
-    resolvedCaption = resolvedCaption.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, key) => {
+    resolvedCaption = resolvedCaption.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, text, key) => {
         const matchExtra = entry.extras.find(extra => extra.includes(key));
         if (matchExtra) {
             const extraUrl = DATA_ROOT + pathToGallery + '/' + matchExtra;
