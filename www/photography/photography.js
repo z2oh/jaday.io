@@ -386,11 +386,11 @@ function createGalleryEntry(galleryPath, entry) {
 // Note that this HTMLElement does not include the collection header; it is the actual gallery
 // element holding the images to be justified.
 async function createGallery(collection) {
-    const galleryContainer = document.getElementById('gallery-wrapper');
+    const galleriesElement = document.getElementById('galleries');
 
     const gallery = document.createElement('div');
     gallery.className = 'gallery';
-    galleryContainer.appendChild(gallery);
+    galleriesElement.appendChild(gallery);
 
     const header = document.createElement('h2');
     header.className = 'collection-header';
