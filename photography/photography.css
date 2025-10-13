@@ -93,7 +93,19 @@ body {
     margin-right: clamp(16px, 30px, 5%);
 }
 
-div.justified-gallery>.jg-entry-visible {
+/* .gallery opacity will be dynamically set to 1 on load. */
+.gallery {
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+}
+
+.gallery-collection {
+    transition: height 0.2s ease;
+    will-change: height;
+}
+
+/* This is the path to the <a> element. */
+justified-gallery>.jg-entry-visible {
     transition:
         width 0.2s ease,
         height 0.2s ease,
@@ -102,7 +114,8 @@ div.justified-gallery>.jg-entry-visible {
     will-change: width, height, top, left;
 }
 
-div.justified-gallery>.jg-entry-visible>img {
+/* Styling directly on the <img> tag. */
+justified-gallery>.jg-entry-visible>img {
     transition:
         width 0.2s ease,
         height 0.2s ease,
@@ -112,7 +125,8 @@ div.justified-gallery>.jg-entry-visible>img {
     border-radius: 4px;
 }
 
-div.justified-gallery>.jg-entry-visible>video {
+/* Styling directly on the <video> tag. */
+justified-gallery>.jg-entry-visible>video {
     transition:
         width 0.2s ease,
         height 0.2s ease,
