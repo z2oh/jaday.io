@@ -279,7 +279,7 @@ const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             tickRender();
-            observer.disconnect(entry);
+            observer.unobserve(entry);
         }
     });
 }, {
@@ -322,17 +322,22 @@ async function tickRender(bypassSentinelCheck = false) {
     cIndex += numToRender;
     const collections = await Promise.all(renderCollectionPromises);
 
+    // Call justifyGallery on each collection to load and then display. Once all collections are displayed,
+    // tick the renderer.
     Promise.all(collections.map(collection => {
         addCollectionToLightbox(collection);
-        return justifyGallery(collection.galleryElement);
-    })).then(() => { tickRender() })
+        return justifyGallery(collection.galleryCollectionElement)
+            .then(() => collection.galleryElement.style.opacity = 1);
+    })).then(() => {
+        tickRender();
+    })
 }
 
 // Calls justifiedGallery on a gallery collection element; this function returns a promise which is
 // resolved when gallery layout is complete.
-function justifyGallery(galleryElement) {
+function justifyGallery(galleryCollectionElement) {
     return new Promise(resolve => {
-        $(galleryElement).justifiedGallery({
+        $(galleryCollectionElement).justifiedGallery({
             rowHeight: 400,
             margins: 4,
             waitThumbnailsLoad: false,
@@ -388,9 +393,9 @@ function createGalleryEntry(galleryPath, entry) {
 async function createGallery(collection) {
     const galleriesElement = document.getElementById('galleries');
 
-    const gallery = document.createElement('div');
-    gallery.className = 'gallery';
-    galleriesElement.appendChild(gallery);
+    const galleryElement = document.createElement('div');
+    galleryElement.className = 'gallery';
+    galleriesElement.appendChild(galleryElement);
 
     const header = document.createElement('h2');
     header.className = 'collection-header';
@@ -400,13 +405,13 @@ async function createGallery(collection) {
     subHeader.className = 'collection-subheader';
     subHeader.innerHTML = collection.subtitle;
 
-    const galleryCollection = document.createElement('div');
-    galleryCollection.className = 'gallery-collection';
-    galleryCollection.id = 'gallery-collection-' + collection.path;
+    const galleryCollectionElement = document.createElement('div');
+    galleryCollectionElement.className = 'gallery-collection';
+    galleryCollectionElement.id = 'gallery-collection-' + collection.path;
 
-    gallery.appendChild(header);
-    gallery.appendChild(subHeader);
-    gallery.appendChild(galleryCollection);
+    galleryElement.appendChild(header);
+    galleryElement.appendChild(subHeader);
+    galleryElement.appendChild(galleryCollectionElement);
 
     const manifest = await loadManifest(collection.path);
 
@@ -415,12 +420,20 @@ async function createGallery(collection) {
     for (var i = 0; i < manifest.length; i++) {
         let manifestEntry = manifest[i];
         let entry = createGalleryEntry(collection.path, manifestEntry);
-        galleryCollection.appendChild(entry.galleryEntry);
+        galleryCollectionElement.appendChild(entry.galleryEntry);
         galleryEntryElements.push(entry.galleryEntry);
         lightboxItems.push(entry.lightboxItem);
     }
 
-    return { galleryElement: galleryCollection, galleryEntryElements: galleryEntryElements, lightboxItems: lightboxItems };
+    return {
+        // DOM accessor for the .gallery; this holds the .gallery-collection and header.
+        galleryElement: galleryElement,
+        // DOM accessor for the .gallery-collection; this holds the photos.
+        galleryCollectionElement: galleryCollectionElement,
+
+        galleryEntryElements: galleryEntryElements,
+        lightboxItems: lightboxItems,
+    };
 }
 
 await init();
