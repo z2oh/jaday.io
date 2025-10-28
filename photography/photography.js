@@ -138,7 +138,7 @@ function createCaptionElement(pathToGallery, entry) {
     // Replace extra photo links, like [link to extra 1](extra_1) with anchor elements.
     resolvedCaption = resolvedCaption.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, text, key) => {
         // Prefer matching an extra if there are any available, otherwise treat this as a normal link.
-        const matchExtra = entry.hasOwnProperty("extras") && entry.extras.find(extra => extra.toLowerCase() === key.toLowerCase());
+        const matchExtra = entry.hasOwnProperty("extras") && entry.extras.find(extra => extra.toLowerCase().startsWith(key.toLowerCase()));
         if (matchExtra) {
             const extraUrl = DATA_ROOT + pathToGallery + '/' + matchExtra;
             return `<a href="${extraUrl}" target="_blank" rel="noopener noreferrer">${text}</a>`;
@@ -281,7 +281,7 @@ const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             tickRender();
-            observer.unobserve(entry);
+            observer.disconnect(entry);
         }
     });
 }, {
@@ -326,10 +326,18 @@ async function tickRender(bypassSentinelCheck = false) {
 
     // Call justifyGallery on each collection to load and then display. Once all collections are displayed,
     // tick the renderer.
-    Promise.all(collections.map(collection => {
+    Promise.all(collections.map((collection, index) => {
         addCollectionToLightbox(collection);
         return justifyGallery(collection.galleryCollectionElement)
-            .then(() => collection.galleryElement.style.opacity = 1);
+            .then(() => {
+                if(index >= 1) {
+                    collections[index - 1].isLoaded.then(collection.galleryElement.style.opacity = 1);
+                } else {
+                    collection.galleryElement.style.opacity = 1;
+                }
+                console.log("Marking collection as loaded: " + collections[index]);
+                collections[index].markLoaded();
+            });
     })).then(() => {
         tickRender();
     })
@@ -427,6 +435,9 @@ async function createGallery(collection) {
         lightboxItems.push(entry.lightboxItem);
     }
 
+    var markLoaded;
+    let isLoaded = new Promise(resolve => { markLoaded = resolve; });
+
     return {
         // DOM accessor for the .gallery; this holds the .gallery-collection and header.
         galleryElement: galleryElement,
@@ -435,6 +446,9 @@ async function createGallery(collection) {
 
         galleryEntryElements: galleryEntryElements,
         lightboxItems: lightboxItems,
+
+        isLoaded: isLoaded,
+        markLoaded: markLoaded,
     };
 }
 
