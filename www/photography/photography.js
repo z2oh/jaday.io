@@ -138,7 +138,7 @@ function createCaptionElement(pathToGallery, entry) {
     // Replace extra photo links, like [link to extra 1](extra_1) with anchor elements.
     resolvedCaption = resolvedCaption.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, text, key) => {
         // Prefer matching an extra if there are any available, otherwise treat this as a normal link.
-        const matchExtra = entry.hasOwnProperty("extras") && entry.extras.find(extra => extra.toLowerCase() === key.toLowerCase());
+        const matchExtra = entry.hasOwnProperty("extras") && entry.extras.find(extra => extra.toLowerCase().startsWith(key.toLowerCase()));
         if (matchExtra) {
             const extraUrl = DATA_ROOT + pathToGallery + '/' + matchExtra;
             return `<a href="${extraUrl}" target="_blank" rel="noopener noreferrer">${text}</a>`;
