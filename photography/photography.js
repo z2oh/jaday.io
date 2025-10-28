@@ -281,7 +281,7 @@ const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             tickRender();
-            observer.disconnect(entry);
+            observer.unobserve(entry);
         }
     });
 }, {
@@ -326,18 +326,10 @@ async function tickRender(bypassSentinelCheck = false) {
 
     // Call justifyGallery on each collection to load and then display. Once all collections are displayed,
     // tick the renderer.
-    Promise.all(collections.map((collection, index) => {
+    Promise.all(collections.map(collection => {
         addCollectionToLightbox(collection);
         return justifyGallery(collection.galleryCollectionElement)
-            .then(() => {
-                if(index >= 1) {
-                    collections[index - 1].isLoaded.then(collection.galleryElement.style.opacity = 1);
-                } else {
-                    collection.galleryElement.style.opacity = 1;
-                }
-                console.log("Marking collection as loaded: " + collections[index]);
-                collections[index].markLoaded();
-            });
+            .then(() => collection.galleryElement.style.opacity = 1);
     })).then(() => {
         tickRender();
     })
@@ -435,9 +427,6 @@ async function createGallery(collection) {
         lightboxItems.push(entry.lightboxItem);
     }
 
-    var markLoaded;
-    let isLoaded = new Promise(resolve => { markLoaded = resolve; });
-
     return {
         // DOM accessor for the .gallery; this holds the .gallery-collection and header.
         galleryElement: galleryElement,
@@ -446,9 +435,6 @@ async function createGallery(collection) {
 
         galleryEntryElements: galleryEntryElements,
         lightboxItems: lightboxItems,
-
-        isLoaded: isLoaded,
-        markLoaded: markLoaded,
     };
 }
 
