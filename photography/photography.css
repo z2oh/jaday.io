@@ -9,6 +9,11 @@
     src: url('/assets/fonts/SUSE-Medium.ttf');
 }
 
+@font-face {
+    font-family: "Mr De Haviland Regular";
+    src: url('/assets/fonts/MrDeHaviland-Regular.ttf');
+}
+
 /* Setup base page layout */
 html,
 body {
@@ -228,4 +233,20 @@ justified-gallery>.jg-entry-visible>video {
 .justified-gallery>a>.jg-caption.jg-caption-visible {
     transition: opacity 100ms ease-in;
     opacity: 1;
+}
+
+#footer-element {
+    text-align: center;
+
+    font-size: calc(2rem);
+    line-height: 1rem;
+    font-family: "Mr De Haviland Regular", sans-serif;
+    color: #fff;
+
+    padding-top: 1rem;
+    padding-bottom: 1.5rem;
+
+    background-image: linear-gradient(to bottom, transparent, #000);
+
+    border-top: 1px #fffa solid;
 }
