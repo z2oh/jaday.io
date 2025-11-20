@@ -263,6 +263,7 @@ var cIndex = 0;
 const csp = await fetch(DATA_ROOT + COLLECTIONS_JSON);
 const cs = await csp.json();
 
+// N.B. !! this function mutates global state
 function addCollectionToLightbox(collection) {
     const { items, lightbox } = window.GalleryApp;
 
@@ -281,7 +282,7 @@ const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             tickRender();
-            observer.unobserve(entry);
+            observer.disconnect(entry);
         }
     });
 }, {
@@ -317,17 +318,27 @@ async function tickRender(bypassSentinelCheck = false) {
         }
     }
 
+    const galleriesElement = document.getElementById('galleries');
     const renderCollectionPromises = [];
     for (let i = 0; i < numToRender; i++) {
-        renderCollectionPromises.push(createGallery(cs[cIndex + i]));
+        // Attach the gallery element to DOM synchronously before asynchronously loading the gallery.
+        let galleryElement = document.createElement('div');
+        galleriesElement.appendChild(galleryElement);
+        renderCollectionPromises.push(createGallery(galleryElement, cs[cIndex + i]));
     }
     cIndex += numToRender;
     const collections = await Promise.all(renderCollectionPromises);
 
+    // Add the collections to lightbox synchronously here, ensuring they are added in the correct
+    // order. This must be done after the initial async gallery load, as we rely on information
+    // from a fetched manifest.json.
+    collections.forEach(collection => {
+        addCollectionToLightbox(collection);
+    });
+
     // Call justifyGallery on each collection to load and then display. Once all collections are displayed,
     // tick the renderer.
     Promise.all(collections.map(collection => {
-        addCollectionToLightbox(collection);
         return justifyGallery(collection.galleryCollectionElement)
             .then(() => collection.galleryElement.style.opacity = 1);
     })).then(() => {
@@ -392,12 +403,11 @@ function createGalleryEntry(galleryPath, entry) {
 // Renders the provided collection object to the DOM and returns the HTML gallery collection;
 // Note that this HTMLElement does not include the collection header; it is the actual gallery
 // element holding the images to be justified.
-async function createGallery(collection) {
-    const galleriesElement = document.getElementById('galleries');
-
-    const galleryElement = document.createElement('div');
+//
+// This function accepts a caller-provided `galleryElement` to fill out, which the caller must
+// attach to the DOM.
+async function createGallery(galleryElement, collection) {
     galleryElement.className = 'gallery';
-    galleriesElement.appendChild(galleryElement);
 
     const header = document.createElement('h2');
     header.className = 'collection-header';
