@@ -299,7 +299,10 @@ async function tickRender(bypassSentinelCheck = false) {
     const numToRender = Math.min(3, cs.length - cIndex);
 
     // Finish ticking.
-    if (numToRender === 0) { return; }
+    if (numToRender === 0) {
+        finishTicking();
+        return;
+    }
 
     if (!bypassSentinelCheck) {
         const sentinel = document.getElementById('load-more-sentinel');
@@ -344,6 +347,13 @@ async function tickRender(bypassSentinelCheck = false) {
     })).then(() => {
         tickRender();
     })
+}
+
+// This function exposes a closing footer element beneath the last gallery. It is to be called a
+// single time, on the final tickRender call, after the last gallery has been rendered.
+async function finishTicking() {
+    const existingFooterElement = document.getElementById('footer-element');
+    existingFooterElement.style.display = 'block';
 }
 
 // Calls justifiedGallery on a gallery collection element; this function returns a promise which is
