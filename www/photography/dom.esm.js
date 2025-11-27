@@ -1,4 +1,4 @@
-import { DATA_ROOT, loadManifest } from './api.esm.js'
+import { DATA_ROOT, loadManifestFromAPI } from './api.esm.js'
 
 // ============================================================================
 //  Gallery Rendering API
@@ -50,12 +50,12 @@ async function createGallery(galleryElement, collection) {
     galleryElement.appendChild(subHeader);
     galleryElement.appendChild(galleryCollectionElement);
 
-    const manifest = await loadManifest(collection.path);
+    let manifest = await loadManifestFromAPI(collection.path);
 
     let galleryEntryElements = [];
     let lightboxItems = [];
-    for (var i = 0; i < manifest.length; i++) {
-        let manifestEntry = manifest[i];
+    for (let i = 0; i < manifest.data.length; i++) {
+        let manifestEntry = manifest.data[i];
         let entry = createGalleryEntry(collection.path, manifestEntry);
         galleryCollectionElement.appendChild(entry.galleryEntry);
         galleryEntryElements.push(entry.galleryEntry);

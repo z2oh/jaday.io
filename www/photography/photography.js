@@ -1,5 +1,5 @@
 import { renderGalleries } from './dom.esm.js';
-import { loadCollections } from './api.esm.js';
+import { loadCollectionsFromAPI } from './api.esm.js';
 
 import PhotoSwipeLightbox from './photoswipe/photoswipe-lightbox.esm.js';
 import PhotoSwipeDynamicCaption from './photoswipe/photoswipe-dynamic-caption-plugin.esm.js';
@@ -53,7 +53,7 @@ async function init() {
     lightbox.init();
     window.GalleryApp.lightbox = lightbox;
 
-    let collections = await loadCollections();
+    let collections = await loadCollectionsFromAPI();
     window.GalleryApp.collections = collections;
 }
 
