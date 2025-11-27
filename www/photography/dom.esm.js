@@ -78,7 +78,6 @@ function createGallery(galleryElement, manifest) {
 // Switches on the type of entry and creates and returns a gallery entry (`.galleryEntry`) and its
 // associated lightbox item (`.lightboxItem`).
 function createGalleryEntry(manifestEntry) {
-    console.log(manifestEntry);
     if (manifestEntry.type === "image") {
         return createJustifiedImageEntry(manifestEntry);
     } else if (manifestEntry.type === "video") {
