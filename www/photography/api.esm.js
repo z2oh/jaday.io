@@ -29,9 +29,11 @@ class GalleryManifest {
             throw new Error("GalleryManifest constructed with invalid data:\n" + data);
         }
 
+        let collectionDataRoot = dataRoot + '/' + collection.path;
+
         this.entries = [];
         for (var i = 0; i < data.length; i++) {
-            this.entries.push(new ManifestEntry(data[i], dataRoot));
+            this.entries.push(new ManifestEntry(data[i], collectionDataRoot));
         }
 
         this.title = collection.title;
@@ -47,18 +49,20 @@ class ManifestEntry {
 
         this.small_thumbnail = dataRoot + '/' + this.small_thumbnail;
         this.large_thumbnail = dataRoot + '/' + this.large_thumbnail;
-        if (Object.hasOwn("extras", this)) {
+        if (Object.hasOwn(this, "extras")) {
             for (let i = 0; i < this.extras.length; i++) {
                 this.extras[i] = dataRoot + '/' + this.extras[i];
             }
+        } else {
+            this.extras = [];
         }
 
-        if (Object.hasOwn("image", this)) {
+        if (Object.hasOwn(this, "image")) {
             this.image = dataRoot + '/' + this.image;
-        }
-
-        if (Object.hasOwn("video", this)) {
+            this.type = "image";
+        } else if (Object.hasOwn(this, "video")) {
             this.video = dataRoot + '/' + this.video;
+            this.type = "video";
         }
     }
 }
