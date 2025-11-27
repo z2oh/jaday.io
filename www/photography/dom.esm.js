@@ -4,7 +4,9 @@ import { DATA_ROOM } from './api.esm.js'
 //  Gallery Rendering API
 // ============================================================================
 
-export function renderGallery() {}
+export function renderGallery(manifest) {
+    return renderGalleries([manifest]);
+}
 
 export function renderGalleries(manifests) {
     const galleriesElement = document.getElementById('galleries');
@@ -19,7 +21,6 @@ export function renderGalleries(manifests) {
     
     return galleries;
 }
-
 
 // ============================================================================
 //  Gallery DOM creation.
