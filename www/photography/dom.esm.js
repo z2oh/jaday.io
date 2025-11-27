@@ -1,4 +1,4 @@
-import { DATA_ROOM } from './api.esm.js'
+import { DATA_ROOT } from './api.esm.js'
 
 // ============================================================================
 //  Gallery Rendering API
