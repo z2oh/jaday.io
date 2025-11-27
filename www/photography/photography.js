@@ -1,5 +1,5 @@
 import { renderGalleries } from './dom.esm.js';
-import { loadCollectionsFromAPI } from './api.esm.js';
+import { loadCollectionsFromAPI, loadManifestFromAPI } from './api.esm.js';
 
 import PhotoSwipeLightbox from './photoswipe/photoswipe-lightbox.esm.js';
 import PhotoSwipeDynamicCaption from './photoswipe/photoswipe-dynamic-caption-plugin.esm.js';
@@ -88,10 +88,10 @@ const observer = new IntersectionObserver((entries) => {
 // If bypassSentinelCheck == true, all sentinel logic is bypassed; this is used by the lightbox to force more
 // collections to render when the lightbox is running out of images.
 async function tickRender(bypassSentinelCheck = false) {
-    const numToRender = Math.min(3, window.GalleryApp.collections.length - window.GalleryApp.collectionIndex);
+    const numCollectionsToRender = Math.min(3, window.GalleryApp.collections.length - window.GalleryApp.collectionIndex);
 
     // Finish ticking.
-    if (numToRender === 0) {
+    if (numCollectionsToRender === 0) {
         finishTicking();
         return;
     }
@@ -113,9 +113,15 @@ async function tickRender(bypassSentinelCheck = false) {
         }
     }
 
-    var galleriesToRender = window.GalleryApp.collections.slice(window.GalleryApp.collectionIndex, window.GalleryApp.collectionIndex + numToRender);
-    window.GalleryApp.collectionIndex += numToRender;
-    const collections = await renderGalleries(galleriesToRender);
+    // For each gallery that we are loading, construct its GalleryManifest object.
+    let collectionsToRender = window.GalleryApp.collections.slice(window.GalleryApp.collectionIndex, window.GalleryApp.collectionIndex + numCollectionsToRender);
+    window.GalleryApp.collectionIndex += numCollectionsToRender;
+    var manifestsToRender = [];
+    for(let i = 0; i < collectionsToRender.length; i++) {
+        let collection = collectionsToRender[i];
+        manifestsToRender.push(await loadManifestFromAPI(collection));
+    }
+    const collections = renderGalleries(manifestsToRender);
 
     // Add the collections to lightbox synchronously here, ensuring they are added in the correct
     // order. This must be done after the initial async gallery load, as we rely on information

@@ -10,12 +10,12 @@ export async function loadCollectionsFromAPI() {
 }
 
 // Returns manifest.json for a given gallery path.
-export async function loadManifestFromAPI(pathToGallery) {
+export async function loadManifestFromAPI(collection) {
     const MANIFEST_JSON = "manifest.json"
 
-    let manifestUrl = DATA_ROOT + '/' + pathToGallery + '/' + MANIFEST_JSON;
+    let manifestUrl = DATA_ROOT + '/' + collection.path + '/' + MANIFEST_JSON;
     let manifestData = await fetch(manifestUrl);
-    return new GalleryManifest(await manifestData.json(), DATA_ROOT + '/' + pathToGallery);
+    return new GalleryManifest(await manifestData.json(), DATA_ROOT, collection);
 }
 
 // An object which fully describes a gallery to render. This is similar to the object described by
@@ -24,15 +24,19 @@ export async function loadManifestFromAPI(pathToGallery) {
 // The primary intention of this class is to decouple gallery data from rendering logic, enabling
 // the renderer to be agnostic over gallery data source.
 class GalleryManifest {
-    constructor(data, dataRoot) {
+    constructor(data, dataRoot, collection) {
         if (!Array.isArray(data)) {
             throw new Error("GalleryManifest constructed with invalid data:\n" + data);
         }
 
-        this.data = [];
+        this.entries = [];
         for (var i = 0; i < data.length; i++) {
-            this.data.push(new ManifestEntry(data[i], dataRoot));
+            this.entries.push(new ManifestEntry(data[i], dataRoot));
         }
+
+        this.title = collection.title;
+        this.subtitle = collection.subtitle;
+        this.path = collection.path;
     }
 }
 

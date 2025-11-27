@@ -1,22 +1,23 @@
-import { DATA_ROOT, loadManifestFromAPI } from './api.esm.js'
+import { DATA_ROOM } from './api.esm.js'
 
 // ============================================================================
 //  Gallery Rendering API
 // ============================================================================
 
-export async function renderGallery() {}
+export function renderGallery() {}
 
-export async function renderGalleries(galleries) {
+export function renderGalleries(manifests) {
     const galleriesElement = document.getElementById('galleries');
-    const renderCollectionPromises = [];
-    for (let i = 0; i < galleries.length; i++) {
+
+    var galleries = [];
+    for (let i = 0; i < manifests.length; i++) {
         // Attach the gallery element to DOM synchronously before asynchronously loading the gallery.
         let galleryElement = document.createElement('div');
         galleriesElement.appendChild(galleryElement);
-        renderCollectionPromises.push(createGallery(galleryElement, galleries[i]));
+        galleries.push(createGallery(galleryElement, manifests[i]));
     }
     
-    return Promise.all(renderCollectionPromises);
+    return galleries;
 }
 
 
@@ -31,32 +32,30 @@ export async function renderGalleries(galleries) {
 // This function accepts a caller-provided `galleryElement` to fill out, which the caller must
 // attach to the DOM. This is done so that the galleries are added to the DOM in the correct
 // order and do not race on the completion of the aysnc manifest fetch in this function.
-async function createGallery(galleryElement, collection) {
+function createGallery(galleryElement, manifest) {
     galleryElement.className = 'gallery';
 
     const header = document.createElement('h2');
     header.className = 'collection-header';
-    header.innerHTML = collection.title;
+    header.innerHTML = manifest.title;
 
     const subHeader = document.createElement('h3');
     subHeader.className = 'collection-subheader';
-    subHeader.innerHTML = collection.subtitle;
+    subHeader.innerHTML = manifest.subtitle;
 
     const galleryCollectionElement = document.createElement('div');
     galleryCollectionElement.className = 'gallery-collection';
-    galleryCollectionElement.id = 'gallery-collection-' + collection.path;
+    galleryCollectionElement.id = 'gallery-collection-' + manifest.path;
 
     galleryElement.appendChild(header);
     galleryElement.appendChild(subHeader);
     galleryElement.appendChild(galleryCollectionElement);
 
-    let manifest = await loadManifestFromAPI(collection.path);
-
     let galleryEntryElements = [];
     let lightboxItems = [];
-    for (let i = 0; i < manifest.data.length; i++) {
-        let manifestEntry = manifest.data[i];
-        let entry = createGalleryEntry(collection.path, manifestEntry);
+    for (let i = 0; i < manifest.entries.length; i++) {
+        let manifestEntry = manifest.entries[i];
+        let entry = createGalleryEntry(manifest.path, manifestEntry);
         galleryCollectionElement.appendChild(entry.galleryEntry);
         galleryEntryElements.push(entry.galleryEntry);
         lightboxItems.push(entry.lightboxItem);
