@@ -1,36 +1,44 @@
+import { renderGalleries } from './dom.esm.js';
+import { loadCollections } from './api.esm.js';
+
 import PhotoSwipeLightbox from './photoswipe/photoswipe-lightbox.esm.js';
 import PhotoSwipeDynamicCaption from './photoswipe/photoswipe-dynamic-caption-plugin.esm.js';
 import PhotoSwipeVideoPlugin from './photoswipe/photoswipe-video-plugin.esm.js';
 
-const DATA_ROOT = "https://data.jaday.io/photos/"
-const MANIFEST_JSON = "/manifest.json"
-const COLLECTIONS_JSON = "collections.json"
-
+// Initialize the global gallery application state into window.GalleryApp, the schema is:
+// {
+//   "lightbox": the PhotoSwipeLightbox object
+//   "items": the globally shared PhotoSwipe data source
+//   "collections": the collections.json root data source
+//   "collectionIndex": the next collection from collections.json to be rendered
+// }
 async function init() {
     window.GalleryApp = {
         lightbox: null,
-        items: [], // shared PhotoSwipe dataSource
+        lightboxItems: [],
+        collections: null,
+        collectionIndex: 0,
     };
 
     const lightbox = new PhotoSwipeLightbox({
-        dataSource: window.GalleryApp.items,
+        dataSource: window.GalleryApp.lightboxItems,
         pswpModule: () => import('./photoswipe/photoswipe.esm.js'),
 
-        paddingFn: (viewportSize) => {
+        paddingFn: () => {
             return {
                 top: 8, bottom: 8, left: 8, right: 8
             }
         },
     });
 
-    const captionPlugin = new PhotoSwipeDynamicCaption(lightbox, {
+    new PhotoSwipeDynamicCaption(lightbox, {
         type: 'auto',
         captionContent: (slide) => {
             return slide.data.captionHTML;
         },
     });
 
-    const videoPlugin = new PhotoSwipeVideoPlugin(lightbox, {});
+    new PhotoSwipeVideoPlugin(lightbox, {});
 
     lightbox.on('change', () => {
         const currentIndex = lightbox.pswp.currIndex;
@@ -42,238 +50,22 @@ async function init() {
             tickRender(true);
         }
     });
-
-    window.GalleryApp.lightbox = lightbox;
     lightbox.init();
+    window.GalleryApp.lightbox = lightbox;
 
-    tickRender();
+    let collections = await loadCollections();
+    window.GalleryApp.collections = collections;
 }
-
-// Returns manifest JSON.
-async function loadManifest(pathToGallery) {
-    let galleryUrl = DATA_ROOT + pathToGallery;
-    let manifestUrl = galleryUrl + MANIFEST_JSON;
-
-    const response = await fetch(manifestUrl);
-    return response.json();
-}
-
-function createExifBlockElement(entry) {
-    const exifDiv = document.createElement('div');
-    exifDiv.className = 'exif';
-
-    const makeSpan = (id, icon, label, value, tooltipText = "") => {
-        const span = document.createElement('span');
-        span.className = 'exif-row';
-        span.id = id;
-
-        const imgIcon = document.createElement('img');
-        imgIcon.src = `/assets/svg/exif/${icon}`;
-        imgIcon.className = 'exif-icon';
-
-        const text = document.createElement('span');
-        text.textContent = `${label} ${value}`;
-
-        if (tooltipText.length > 0) {
-            const tooltip = document.createElement('span');
-            tooltip.textContent = tooltipText;
-            tooltip.className = 'tooltip-text';
-
-            text.appendChild(tooltip);
-            text.classList.add('tooltip');
-        }
-
-        span.appendChild(imgIcon);
-        span.appendChild(text);
-        return span;
-    };
-
-    const manualLensApertureTooltip = 'This manual lens lacks electronics, meaning the aperture is not captured in EXIF metadata.'
-
-    exifDiv.appendChild(makeSpan('iso', 'equalizer_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', 'ISO', entry.exif.iso));
-    exifDiv.appendChild(makeSpan('shutter', 'shutter_speed_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', `${entry.exif.shutter_speed}s`));
-    if (entry.exif.lens == "Laowa 4mm f/2.8 Fisheye") {
-        exifDiv.appendChild(makeSpan('aperture', 'camera_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', 'f/', '?', manualLensApertureTooltip));
-        // This lens always erroneously reports 21mm focal length in the EXIF.
-        exifDiv.appendChild(makeSpan('focal-length', 'arrows_outward_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', '4mm'));
-    } else {
-        exifDiv.appendChild(makeSpan('aperture', 'camera_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', 'f/', entry.exif.aperture));
-        exifDiv.appendChild(makeSpan('focal-length', 'arrows_outward_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', entry.exif.focal_length));
-    }
-    exifDiv.appendChild(makeSpan('camera', 'photo_camera_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', entry.exif.camera));
-    exifDiv.appendChild(makeSpan('lens', 'circle_24dp_2D2A2A_FILL0_wght400_GRAD0_opsz24.svg', '', entry.exif.lens));
-
-    return exifDiv;
-}
-
-function createCaptionElement(pathToGallery, entry) {
-    const captionWrapper = document.createElement('div');
-    captionWrapper.className = 'pswp-caption-content';
-
-    const titleBox = document.createElement('div')
-    titleBox.className = 'title-box'
-
-    const header = document.createElement('h2');
-    header.className = 'image-name';
-    header.innerHTML = entry.name
-
-    const location = document.createElement('h3');
-    location.className = 'image-location';
-    location.innerHTML = entry.location
-
-    const datetime = document.createElement('h3');
-    datetime.className = 'image-datetime';
-    datetime.innerHTML = entry.datetime
-
-    const subHeader = document.createElement('h3');
-    subHeader.className = 'image-caption';
-
-    var resolvedCaption = entry.caption;
-
-    // Replace markdown-italicized text, like _this_, with emphasis elements.
-    resolvedCaption = resolvedCaption.replace(/_([^\[\]]*?)_/g, (_match, content) => {
-        return `<em>${content}</em>`;
-    });
-
-    // Replace extra photo links, like [link to extra 1](extra_1) with anchor elements.
-    resolvedCaption = resolvedCaption.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, text, key) => {
-        // Prefer matching an extra if there are any available, otherwise treat this as a normal link.
-        const matchExtra = entry.hasOwnProperty("extras") && entry.extras.find(extra => extra.toLowerCase().startsWith(key.toLowerCase()));
-        if (matchExtra) {
-            const extraUrl = DATA_ROOT + pathToGallery + '/' + matchExtra;
-            return `<a href="${extraUrl}" target="_blank" rel="noopener noreferrer">${text}</a>`;
-        } else {
-            return `<a href="${key}" target="_blank" rel="noopener noreferrer">${text}</a>`;
-        }
-    });
-
-    subHeader.innerHTML = resolvedCaption
-
-    titleBox.appendChild(header);
-    titleBox.appendChild(location);
-    titleBox.appendChild(datetime);
-
-    const exifDiv = createExifBlockElement(entry);
-
-    captionWrapper.appendChild(titleBox);
-    captionWrapper.appendChild(subHeader);
-    captionWrapper.appendChild(exifDiv);
-
-    return captionWrapper;
-}
-
-function createJustifiedImageEntry(pathToGallery, entry) {
-    const image_url = DATA_ROOT + pathToGallery + '/' + entry.image;
-    const image_small_thumbnail_url = DATA_ROOT + pathToGallery + '/0s_' + entry.image;
-    const image_large_thumbnail_url = DATA_ROOT + pathToGallery + '/1l_' + entry.image;
-
-    const a = document.createElement('a');
-    a.href = image_url;
-    a.dataset.pswpWidth = entry.width;
-    a.dataset.pswpHeight = entry.height;
-
-    const img = document.createElement('img');
-    img.className = entry.width > entry.height ? 'is-landscape' : 'is-portrait';
-    img.src = image_small_thumbnail_url;
-    img.alt = entry.name || entry.image;
-
-    const captionWrapper = createCaptionElement(pathToGallery, entry);
-
-    a.appendChild(img);
-    a.appendChild(captionWrapper);
-
-    let lightboxItem = {
-        src: image_url,
-        width: entry.width,
-        height: entry.height,
-        alt: entry.name,
-        captionHTML: captionWrapper.innerHTML,
-    };
-
-    return { galleryEntry: a, lightboxItem: lightboxItem, };
-}
-
-/// When the underlying justified gallery entry size changes, resize the underlying video element to match.
-/// TODO: will this fire for every video if any video is resized?
-const videoResizeObserver = new ResizeObserver((entries) => {
-    for (const entry of entries) {
-        let video = entry.target.getElementsByTagName('video')[0];
-        if (entry.contentRect.width) {
-            video.width = entry.contentRect.width;
-        }
-        if (entry.contentRect.height) {
-            video.height = entry.contentRect.height;
-        }
-    }
-});
-
-function createJustifiedVideoEntry(pathToGallery, entry) {
-    const videoUrl = DATA_ROOT + pathToGallery + '/' + entry.video;
-    const video_small_thumbnail_url = DATA_ROOT + pathToGallery + '/' + entry.small_thumbnail;
-    const video_large_thumbnail_url = DATA_ROOT + pathToGallery + '/' + entry.large_thumbnail;
-
-    const a = document.createElement('a');
-    a.href = videoUrl;
-    a.dataset.pswpWidth = entry.width;
-    a.dataset.pswpHeight = entry.height;
-    a.dataset.pswpType = "video";
-
-    const img = document.createElement('img');
-    // 1x1 transparent pixel
-    img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-    img.width = entry.width;
-    img.height = entry.height;
-    img.style = "display: none;"
-
-    const video = document.createElement('video');
-    video.className = entry.width > entry.height ? 'is-landscape' : 'is-portrait';
-    video.src = videoUrl;
-    video.alt = entry.name || entry.video;
-    video.autoplay = true;
-    video.loop = true;
-    video.playsInline = true;
-
-    const source = document.createElement('source');
-    source.src = videoUrl;
-    source.type = "video/mov";
-
-    video.appendChild(source);
-
-    const captionWrapper = createCaptionElement(pathToGallery, entry);
-
-    a.appendChild(img);
-    a.appendChild(video);
-    a.appendChild(captionWrapper);
-
-    videoResizeObserver.observe(a);
-
-    let lightboxItem = {
-        videoSrc: videoUrl,
-        width: entry.width,
-        height: entry.height,
-        alt: entry.name,
-        type: 'video',
-        captionHTML: captionWrapper.innerHTML,
-    };
-
-    return { galleryEntry: a, lightboxItem: lightboxItem, };
-}
-
-var cIndex = 0;
-const csp = await fetch(DATA_ROOT + COLLECTIONS_JSON);
-const cs = await csp.json();
 
 // N.B. !! this function mutates global state
 function addCollectionToLightbox(collection) {
-    const { items, lightbox } = window.GalleryApp;
-
-    var baseItemIndex = items.length;
+    var baseItemIndex = window.GalleryApp.lightboxItems.length;
     for (let i = 0; i < collection.galleryEntryElements.length; i++) {
-        items.push(collection.lightboxItems[i]);
+        window.GalleryApp.lightboxItems.push(collection.lightboxItems[i]);
 
         collection.galleryEntryElements[i].addEventListener('click', (e) => {
             e.preventDefault();
-            lightbox.loadAndOpen(baseItemIndex + i);
+            window.GalleryApp.lightbox.loadAndOpen(baseItemIndex + i);
         });
     }
 }
@@ -296,7 +88,7 @@ const observer = new IntersectionObserver((entries) => {
 // If bypassSentinelCheck == true, all sentinel logic is bypassed; this is used by the lightbox to force more
 // collections to render when the lightbox is running out of images.
 async function tickRender(bypassSentinelCheck = false) {
-    const numToRender = Math.min(3, cs.length - cIndex);
+    const numToRender = Math.min(3, window.GalleryApp.collections.length - window.GalleryApp.collectionIndex);
 
     // Finish ticking.
     if (numToRender === 0) {
@@ -321,16 +113,9 @@ async function tickRender(bypassSentinelCheck = false) {
         }
     }
 
-    const galleriesElement = document.getElementById('galleries');
-    const renderCollectionPromises = [];
-    for (let i = 0; i < numToRender; i++) {
-        // Attach the gallery element to DOM synchronously before asynchronously loading the gallery.
-        let galleryElement = document.createElement('div');
-        galleriesElement.appendChild(galleryElement);
-        renderCollectionPromises.push(createGallery(galleryElement, cs[cIndex + i]));
-    }
-    cIndex += numToRender;
-    const collections = await Promise.all(renderCollectionPromises);
+    var galleriesToRender = window.GalleryApp.collections.slice(window.GalleryApp.collectionIndex, window.GalleryApp.collectionIndex + numToRender);
+    window.GalleryApp.collectionIndex += numToRender;
+    const collections = await renderGalleries(galleriesToRender);
 
     // Add the collections to lightbox synchronously here, ensuring they are added in the correct
     // order. This must be done after the initial async gallery load, as we rely on information
@@ -393,69 +178,8 @@ function justifyGallery(galleryCollectionElement) {
     });
 }
 
-// Determine the type of gallery element to be rendered, and add it to the DOM.
-function createGalleryEntry(galleryPath, entry) {
-    let type;
-    if (Object.hasOwn(entry, "image")) {
-        type = "image";
-    } else if (Object.hasOwn(entry, "video")) {
-        type = "video";
-    } else {
-        console.warn("Unknown entry type.\n" + entry);
-    }
-    if (type === "image") {
-        return createJustifiedImageEntry(galleryPath, entry);
-    } else if (type === "video") {
-        return createJustifiedVideoEntry(galleryPath, entry);
-    }
-}
-
-// Renders the provided collection object to the DOM and returns the HTML gallery collection;
-// Note that this HTMLElement does not include the collection header; it is the actual gallery
-// element holding the images to be justified.
-//
-// This function accepts a caller-provided `galleryElement` to fill out, which the caller must
-// attach to the DOM.
-async function createGallery(galleryElement, collection) {
-    galleryElement.className = 'gallery';
-
-    const header = document.createElement('h2');
-    header.className = 'collection-header';
-    header.innerHTML = collection.title;
-
-    const subHeader = document.createElement('h3');
-    subHeader.className = 'collection-subheader';
-    subHeader.innerHTML = collection.subtitle;
-
-    const galleryCollectionElement = document.createElement('div');
-    galleryCollectionElement.className = 'gallery-collection';
-    galleryCollectionElement.id = 'gallery-collection-' + collection.path;
-
-    galleryElement.appendChild(header);
-    galleryElement.appendChild(subHeader);
-    galleryElement.appendChild(galleryCollectionElement);
-
-    const manifest = await loadManifest(collection.path);
-
-    let galleryEntryElements = [];
-    let lightboxItems = [];
-    for (var i = 0; i < manifest.length; i++) {
-        let manifestEntry = manifest[i];
-        let entry = createGalleryEntry(collection.path, manifestEntry);
-        galleryCollectionElement.appendChild(entry.galleryEntry);
-        galleryEntryElements.push(entry.galleryEntry);
-        lightboxItems.push(entry.lightboxItem);
-    }
-
-    return {
-        // DOM accessor for the .gallery; this holds the .gallery-collection and header.
-        galleryElement: galleryElement,
-        // DOM accessor for the .gallery-collection; this holds the photos.
-        galleryCollectionElement: galleryCollectionElement,
-
-        galleryEntryElements: galleryEntryElements,
-        lightboxItems: lightboxItems,
-    };
-}
-
+// Wait for the app to initialize...
 await init();
+
+// ...then start the render event loop.
+tickRender();
