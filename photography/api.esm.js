@@ -1,7 +1,7 @@
 export const DATA_ROOT = "https://data.jaday.io/photos"
 
 // Returns collections.json.
-export async function loadCollections() {
+export async function loadCollectionsFromAPI() {
     const COLLECTIONS_JSON = "collections.json"
 
     let collectionsUrl = DATA_ROOT + '/' + COLLECTIONS_JSON;
@@ -10,10 +10,59 @@ export async function loadCollections() {
 }
 
 // Returns manifest.json for a given gallery path.
-export async function loadManifest(pathToGallery) {
+export async function loadManifestFromAPI(collection) {
     const MANIFEST_JSON = "manifest.json"
 
-    let manifestUrl = DATA_ROOT + '/' + pathToGallery + '/' + MANIFEST_JSON;
+    let manifestUrl = DATA_ROOT + '/' + collection.path + '/' + MANIFEST_JSON;
     let manifestData = await fetch(manifestUrl);
-    return manifestData.json();
+    return new GalleryManifest(await manifestData.json(), DATA_ROOT, collection);
+}
+
+// An object which fully describes a gallery to render. This is similar to the object described by
+// manifest.json, but with all paths fully resolved instead of relative to some data source.
+//
+// The primary intention of this class is to decouple gallery data from rendering logic, enabling
+// the renderer to be agnostic over gallery data source.
+class GalleryManifest {
+    constructor(data, dataRoot, collection) {
+        if (!Array.isArray(data)) {
+            throw new Error("GalleryManifest constructed with invalid data:\n" + data);
+        }
+
+        let collectionDataRoot = dataRoot + '/' + collection.path;
+
+        this.entries = [];
+        for (var i = 0; i < data.length; i++) {
+            this.entries.push(new ManifestEntry(data[i], collectionDataRoot));
+        }
+
+        this.title = collection.title;
+        this.subtitle = collection.subtitle;
+        this.path = collection.path;
+    }
+}
+
+class ManifestEntry {
+    constructor(data, dataRoot) {
+        // Initialize the ManifestEntry with the raw JSON object.
+        Object.assign(this, data);
+
+        this.small_thumbnail = dataRoot + '/' + this.small_thumbnail;
+        this.large_thumbnail = dataRoot + '/' + this.large_thumbnail;
+        if (Object.hasOwn(this, "extras")) {
+            for (let i = 0; i < this.extras.length; i++) {
+                this.extras[i] = dataRoot + '/' + this.extras[i];
+            }
+        } else {
+            this.extras = [];
+        }
+
+        if (Object.hasOwn(this, "image")) {
+            this.image = dataRoot + '/' + this.image;
+            this.type = "image";
+        } else if (Object.hasOwn(this, "video")) {
+            this.video = dataRoot + '/' + this.video;
+            this.type = "video";
+        }
+    }
 }
