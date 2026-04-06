@@ -16,39 +16,26 @@ pub fn format_date(raw: &str, tz_offset: i32) -> Option<String> {
     let format = "%Y:%m:%d %H:%M:%S";
     let dt = chrono::NaiveDateTime::parse_from_str(raw, format).ok()?;
 
-    let month = dt.format("%B").to_string(); // "March"
-    let day = dt.day();
-    let year = dt.year();
+    // Add 30 seconds to afford rounding to nearest minute by truncation, and apply timezone offset.
+    let dt = dt
+        + chrono::Duration::seconds(30)
+        + chrono::Duration::hours(tz_offset as i64);
 
-    // TODO: This may need to roll over the day
-    let mut hour = (dt.hour() as i32 + tz_offset) % 24;
-    let mut minute = dt.minute();
-    let second = dt.second();
-
-    // Round the minute based on seconds
-    if second >= 30 {
-        minute += 1;
-        if minute == 60 {
-            minute = 0;
-            hour = (hour + 1) % 24;
-        }
-    }
-
-    let (display_hour, meridian) = match hour {
+    let (display_hour, meridian) = match dt.hour() {
         0 => (12, "A.M."),
-        1..=11 => (hour, "A.M."),
+        1..=11 => (dt.hour(), "A.M."),
         12 => (12, "P.M."),
-        _ => (hour - 12, "P.M."),
+        _ => (dt.hour() - 12, "P.M."),
     };
 
     Some(format!(
         "{} {}{}, {} at {}:{:02} {}",
-        month,
-        day,
-        ordinal_suffix(day),
-        year,
+        dt.format("%B"),
+        dt.day(),
+        ordinal_suffix(dt.day()),
+        dt.year(),
         display_hour,
-        minute,
+        dt.minute(),
         meridian
     ))
 }
