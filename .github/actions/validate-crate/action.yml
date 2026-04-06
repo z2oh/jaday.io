@@ -1,0 +1,24 @@
+name: Validate Crate
+description: Build and test a Rust crate
+
+inputs:
+  working-directory:
+    description: Path to the crate directory
+    required: true
+  cargo-flags:
+    description: Additional flags to pass to cargo commands
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Build
+      working-directory: ${{ inputs.working-directory }}
+      run: cargo build ${{ inputs.cargo-flags }}
+      shell: bash
+
+    - name: Test
+      working-directory: ${{ inputs.working-directory }}
+      run: cargo test ${{ inputs.cargo-flags }}
+      shell: bash
