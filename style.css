@@ -62,6 +62,13 @@ main {
 
 @media only screen and (min-width: 768px) {
     main {
+        margin: 64px;
+        max-width: 768px;
+    }
+}
+
+@media only screen and (min-width: 1024px) {
+    main {
         margin: 128px;
         max-width: 1024px;
     }
