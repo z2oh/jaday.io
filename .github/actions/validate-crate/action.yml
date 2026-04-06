@@ -15,10 +15,19 @@ runs:
   steps:
     - name: Build
       working-directory: ${{ inputs.working-directory }}
-      run: cargo build ${{ inputs.cargo-flags }}
+      run: |
+        echo "::group::Fetch dependencies"
+        cargo fetch
+        echo "::endgroup::"
+        echo "::group::Compile"
+        cargo build ${{ inputs.cargo-flags }}
+        echo "::endgroup::"
       shell: bash
 
     - name: Test
       working-directory: ${{ inputs.working-directory }}
-      run: cargo test ${{ inputs.cargo-flags }}
+      run: |
+        echo "::group::Compile and run tests"
+        cargo test ${{ inputs.cargo-flags }}
+        echo "::endgroup::"
       shell: bash
