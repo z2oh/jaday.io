@@ -34,21 +34,21 @@ pub fn format_date(raw: &str, tz_offset: i32) -> Option<String> {
         }
     }
 
-    let (display_hour, meridian) = match hour {
+    let (display_hour, meridian) = match dt.hour() {
         0 => (12, "A.M."),
-        1..=11 => (hour, "A.M."),
+        1..=11 => (dt.hour() as i32, "A.M."),
         12 => (12, "P.M."),
-        _ => (hour - 12, "P.M."),
+        _ => (dt.hour() as i32 - 12, "P.M."),
     };
 
     Some(format!(
         "{} {}{}, {} at {}:{:02} {}",
-        month,
-        day,
-        ordinal_suffix(day),
-        year,
+        dt.format("%B"),
+        dt.day(),
+        ordinal_suffix(dt.day()),
+        dt.year(),
         display_hour,
-        minute,
+        dt.minute(),
         meridian
     ))
 }
