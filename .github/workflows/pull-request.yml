@@ -1,0 +1,32 @@
+name: PR
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: main
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: bssg build
+      working-directory: ./tools/bssg
+      run: cargo build
+    
+    - name: foto build
+      working-directory: ./tools/foto
+      run: cargo build
+
+    - name: Set Validated status
+      uses: myrotvorets/set-commit-status-action@v2
+      if: always()
+      with:
+        status: ${{ job.status == 'success' && 'success' || 'failure' }}
+        context: Validated
+        token: ${{ secrets.GITHUB_TOKEN }}
