@@ -47,3 +47,57 @@ impl LazyCache {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn new_with_non_directory_fails() {
+        let result = LazyCache::new(PathBuf::from("/nonexistent/path/that/does/not/exist"));
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn get_or_fetch_reads_file_contents() {
+        let dir = std::env::temp_dir().join("bssg_test_lazy_cache_read");
+        std::fs::create_dir_all(&dir).unwrap();
+        std::fs::write(dir.join("test.html"), "<h1>Hello</h1>").unwrap();
+
+        let cache = LazyCache::new(dir.clone()).unwrap();
+        let result = cache.get_or_fetch("test.html").unwrap();
+        assert_eq!(*result, "<h1>Hello</h1>");
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn get_or_fetch_returns_cached_value_after_file_changes() {
+        let dir = std::env::temp_dir().join("bssg_test_lazy_cache_cached");
+        std::fs::create_dir_all(&dir).unwrap();
+        std::fs::write(dir.join("test.html"), "original content").unwrap();
+
+        let cache = LazyCache::new(dir.clone()).unwrap();
+        let first = cache.get_or_fetch("test.html").unwrap();
+        assert_eq!(*first, "original content");
+
+        // Overwrite the file — the cache should still return the original.
+        std::fs::write(dir.join("test.html"), "modified content").unwrap();
+        let second = cache.get_or_fetch("test.html").unwrap();
+        assert_eq!(*second, "original content");
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn get_or_fetch_missing_file_returns_error() {
+        let dir = std::env::temp_dir().join("bssg_test_lazy_cache_missing");
+        std::fs::create_dir_all(&dir).unwrap();
+
+        let cache = LazyCache::new(dir.clone()).unwrap();
+        let result = cache.get_or_fetch("nonexistent.html");
+        assert!(result.is_err());
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+}

@@ -168,3 +168,38 @@ impl Builder {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn new_rejects_relative_www_path() {
+        let result = Builder::new("relative/www", "/tmp/out");
+        assert!(result.is_err());
+        assert!(result.err().unwrap().to_string().contains("www_path.is_absolute()"));
+    }
+
+    #[test]
+    fn new_rejects_relative_out_path() {
+        let result = Builder::new("/tmp/www", "relative/out");
+        assert!(result.is_err());
+        assert!(result.err().unwrap().to_string().contains("out_path.is_absolute()"));
+    }
+
+    #[test]
+    fn new_succeeds_with_valid_www_dir() {
+        let dir = std::env::temp_dir().join("bssg_test_builder_new");
+        let templates_dir = dir.join("_templates");
+        std::fs::create_dir_all(&templates_dir).unwrap();
+
+        let out_dir = std::env::temp_dir().join("bssg_test_builder_new_out");
+        std::fs::create_dir_all(&out_dir).unwrap();
+
+        let result = Builder::new(&dir, &out_dir);
+        assert!(result.is_ok());
+
+        let _ = std::fs::remove_dir_all(&dir);
+        let _ = std::fs::remove_dir_all(&out_dir);
+    }
+}
