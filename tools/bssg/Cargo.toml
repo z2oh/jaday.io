@@ -7,6 +7,7 @@ description = "A bespoke static site generator for jaday.io"
 
 [dependencies]
 handlebars = "6"
+ignore = "0.4.25"
 notify = "8"
 notify-debouncer-full = "0.5"
 serde = { version = "1", features = ["derive"] }

@@ -95,17 +95,22 @@ impl Builder {
             }
         }
 
-        // Walk all files under `www_path` and concurrently call self.build_file on them.
-        WalkDir::new(&self.www_path)
-            .min_depth(1)
-            .into_iter()
-            // Skip files and directories that start with an underscore.
-            .filter_entry(|e| !e.file_name().to_str().map(|s| s.starts_with("_")).unwrap_or(false))
+        // Walk all files under `www_path` respecting .bssgignore as an ignore-list (.gitignore syntax).
+        ignore::WalkBuilder::new(&self.www_path)
+            .git_ignore(false)
+            .git_global(false)
+            .git_exclude(false)
+            .ignore(false)
+            .add_custom_ignore_filename(".bssgignore")
+            .build()
             .par_bridge()
             .filter_map(|e| e.ok())
-            .filter(|dir_entry| dir_entry.path().is_file())
+            // Skip the root itself (depth 0) and any non-file entries.
+            .filter(|e| e.depth() > 0 && e.path().is_file())
+            // Skip entries whose name starts with an underscore (e.g. _templates).
+            .filter(|e| !e.file_name().to_str().map(|s| s.starts_with('_')).unwrap_or(false))
             .for_each(|dir_entry| {
-                self.build_file(&dir_entry.path()).with_context(|| std::format!("Failed trying to build {:?}", &dir_entry.path())).unwrap();
+                self.build_file(dir_entry.path()).with_context(|| std::format!("Failed trying to build {:?}", dir_entry.path())).unwrap();
             });
 
         // Emit redirect pages.
