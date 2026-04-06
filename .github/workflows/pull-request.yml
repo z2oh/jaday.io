@@ -21,7 +21,7 @@ jobs:
     
     - name: foto build
       working-directory: ./tools/foto
-      run: cargo build
+      run: cargo build --no-default-features
 
     - name: Set Validated status
       uses: myrotvorets/set-commit-status-action@v2.0.1

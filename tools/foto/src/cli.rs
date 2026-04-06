@@ -25,11 +25,20 @@ pub async fn cli(collection_path: &Option<PathBuf>, config: FotoConfig) -> Resul
 
     let collection_path: PathBuf = match collection_path {
         Some(path) => path.into(),
-        None => rfd::AsyncFileDialog::new()
-            .pick_folder()
-            .await
-            .map(|fh| PathBuf::from(fh.path()))
-            .ok_or(anyhow!("Failed to open collection folder"))?,
+        None => {
+            #[cfg(feature = "gui")]
+            {
+                rfd::AsyncFileDialog::new()
+                    .pick_folder()
+                    .await
+                    .map(|fh| PathBuf::from(fh.path()))
+                    .ok_or(anyhow!("Failed to open collection folder"))?
+            }
+            #[cfg(not(feature = "gui"))]
+            {
+                return Err(anyhow!("No collection path provided (`gui` feature is disabled)"));
+            }
+        }
     };
 
     // Check that the manifest.json path exists and check with the user before clobbering it.
