@@ -150,12 +150,6 @@ function createJustifiedVideoEntry(manifestEntry) {
     video.loop = true;
     video.playsInline = true;
 
-    const source = document.createElement('source');
-    source.src = manifestEntry.video;
-    source.type = "video/mov";
-
-    video.appendChild(source);
-
     const captionWrapper = createCaptionElement(manifestEntry);
 
     a.appendChild(img);
