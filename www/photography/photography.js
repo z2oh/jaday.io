@@ -116,11 +116,7 @@ async function tickRender(bypassSentinelCheck = false) {
     // For each gallery that we are loading, construct its GalleryManifest object.
     let collectionsToRender = window.GalleryApp.collections.slice(window.GalleryApp.collectionIndex, window.GalleryApp.collectionIndex + numCollectionsToRender);
     window.GalleryApp.collectionIndex += numCollectionsToRender;
-    var manifestsToRender = [];
-    for(let i = 0; i < collectionsToRender.length; i++) {
-        let collection = collectionsToRender[i];
-        manifestsToRender.push(await loadManifestFromAPI(collection));
-    }
+    const manifestsToRender = await Promise.all(collectionsToRender.map(loadManifestFromAPI));
     const collections = renderGalleries(manifestsToRender);
 
     // Add the collections to lightbox synchronously here, ensuring they are added in the correct
